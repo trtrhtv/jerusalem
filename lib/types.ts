@@ -109,6 +109,35 @@ export interface TimeFeatureCollection {
   features: TimeFeature[];
 }
 
+/**
+ * A camera viewpoint: a real historical photograph/lithograph taken from a
+ * (possibly approximate) location in the pilot area. This is the "slide
+ * between the simulation and the source" anchor. Viewpoints appear on the
+ * timeline from the year the image was made — before 1839 there simply is no
+ * visual documentation, and the map honestly shows none.
+ */
+export interface Viewpoint {
+  id: string;
+  title: string;
+  titleHe?: string;
+  /** Year the image was made (earliest certain year for ranged dates). */
+  year: number;
+  /** Human-readable date, e.g. "1898" or "1898–1914". */
+  yearDisplay: string;
+  /** [lon, lat] of the camera position. */
+  coordinates: [number, number];
+  /** Confidence in the camera position itself. */
+  positionConfidence: "documented" | "approximate";
+  /** ID referencing data/sources.json (the collection/archive). */
+  sourceId: string;
+  /** Verified URL of the specific item page at the holding institution. */
+  itemUrl: string;
+  /** Reproduction / call number at the institution, when known. */
+  reproductionNumber?: string;
+  notes?: string;
+  notesHe?: string;
+}
+
 export interface PeriodDef {
   key: PeriodKey;
   label: string;

@@ -1,6 +1,7 @@
 import periodsRaw from "@/data/periods.json";
 import sourcesRaw from "@/data/sources.json";
 import corridorRaw from "@/data/features/jaffa-gate-corridor.json";
+import viewpointsRaw from "@/data/viewpoints.json";
 import type {
   EvidenceTier,
   PeriodDef,
@@ -8,6 +9,7 @@ import type {
   SourceRecord,
   TimeFeature,
   TimeFeatureCollection,
+  Viewpoint,
 } from "./types";
 
 export const periods = periodsRaw as PeriodDef[];
@@ -26,6 +28,23 @@ export function getSource(id: string): SourceRecord | undefined {
 export const allSources: SourceRecord[] = Object.values(sourceMap);
 
 export const corridor = corridorRaw as unknown as TimeFeatureCollection;
+
+// JSON widens tuple coordinates to number[], so go through unknown.
+export const viewpoints: Viewpoint[] = (
+  viewpointsRaw as unknown as { viewpoints: Viewpoint[] }
+).viewpoints;
+
+/** Viewpoints as GeoJSON for the map's camera layer. */
+export function viewpointsGeoJSON() {
+  return {
+    type: "FeatureCollection" as const,
+    features: viewpoints.map((v) => ({
+      type: "Feature" as const,
+      geometry: { type: "Point" as const, coordinates: v.coordinates },
+      properties: { id: v.id, year: v.year },
+    })),
+  };
+}
 
 /**
  * Year a feature first becomes visible on the timeline. Prefer the specific

@@ -1,0 +1,72 @@
+{
+  "$comment": "Camera viewpoints: real, individually verified historical images of the pilot corridor. Every itemUrl was confirmed against the holding institution's catalog (July 2026); titles and reproduction numbers are quoted verbatim from the catalog. Camera coordinates are estimated from the image content and are marked positionConfidence=approximate — do not present them as surveyed. Images are NOT re-hosted here; the panel links to the institution's item page.",
+  "viewpoints": [
+    {
+      "id": "roberts-jerusalem-south-1839",
+      "title": "Jerusalem from the south, April 12th 1839",
+      "titleHe": "ירושלים מדרום, 12 באפריל 1839",
+      "year": 1839,
+      "yearDisplay": "1839",
+      "coordinates": [35.2293, 31.7706],
+      "positionConfidence": "approximate",
+      "sourceId": "roberts-holy-land-1842",
+      "itemUrl": "https://www.loc.gov/item/2002717458/",
+      "notes": "David Roberts' on-the-spot drawing (lithographed by Louis Haghe, published 1842–49) — among the earliest visual documentation of the city in our timeline. Viewpoint south of the walls, looking north toward the Citadel and the southwest corner of the city. Camera position estimated from the image content.",
+      "notesHe": "רישום מהמקום של דיוויד רוברטס (ליתוגרפיה מאת לואי הגה, פורסם 1842–49) — מהתיעוד הוויזואלי המוקדם ביותר של העיר בציר הזמן שלנו. נקודת המבט מדרום לחומות, צופה צפונה אל המצודה והפינה הדרום-מערבית של העיר. מיקום הצייר מוערך מתוכן התמונה."
+    },
+    {
+      "id": "kaiser-entry-citadel-1898",
+      "title": "State visit of Wilhelm II, 1898: Emperor riding with group; the Citadel and west city wall in background",
+      "titleHe": "ביקור וילהלם השני, 1898: הקיסר רוכב; המצודה והחומה המערבית ברקע",
+      "year": 1898,
+      "yearDisplay": "1898",
+      "coordinates": [35.2265, 31.7762],
+      "positionConfidence": "approximate",
+      "sourceId": "american-colony-archive",
+      "itemUrl": "https://www.loc.gov/resource/matpc.04612/",
+      "reproductionNumber": "LC-DIG-matpc-04612",
+      "notes": "American Colony photograph of the October 1898 imperial entry — the very event for which the wall was breached and the moat ramp built beside Jaffa Gate. Direct documentation of the corridor's 1898 transformation.",
+      "notesHe": "תצלום המושבה האמריקאית מהכניסה הקיסרית של אוקטובר 1898 — האירוע שלמענו נפרצה החומה ונבנה הכבש על החפיר ליד שער יפו. תיעוד ישיר של השינוי שעבר הציר ב-1898."
+    },
+    {
+      "id": "jaffa-road-procession-1898",
+      "title": "State visit of Wilhelm II, 1898: general view of Jaffa Road, crowded with people and flags, during procession",
+      "titleHe": "ביקור וילהלם השני, 1898: מבט כללי על רחוב יפו, הומה אנשים ודגלים, בזמן התהלוכה",
+      "year": 1898,
+      "yearDisplay": "1898",
+      "coordinates": [35.2242, 31.7776],
+      "positionConfidence": "approximate",
+      "sourceId": "american-colony-archive",
+      "itemUrl": "https://www.loc.gov/pictures/item/2019694904/",
+      "notes": "American Colony photograph looking along Jaffa Road during the 1898 procession — documents the road as the city's ceremonial western artery, with the late-Ottoman streetscape around it.",
+      "notesHe": "תצלום המושבה האמריקאית לאורך רחוב יפו בזמן תהלוכת 1898 — מתעד את הרחוב כעורק המערבי הטקסי של העיר, על הרחוב העות'מאני המאוחר שסביבו."
+    },
+    {
+      "id": "jaffa-gate-matson",
+      "title": "Jaffa Gate (Matson collection, between 1898 and 1914)",
+      "titleHe": "שער יפו (אוסף מטסון, בין 1898 ל-1914)",
+      "year": 1898,
+      "yearDisplay": "1898–1914",
+      "coordinates": [35.2271, 31.7771],
+      "positionConfidence": "approximate",
+      "sourceId": "american-colony-archive",
+      "itemUrl": "https://www.loc.gov/item/2019701851/",
+      "reproductionNumber": "LC-DIG-matpc-11351",
+      "notes": "Classic Matson-collection view of the gate from the northwest. Catalog dates it between 1898 and 1914; shown on the timeline from 1898 (the earliest certain year).",
+      "notesHe": "מבט מטסון קלאסי על השער מצפון-מערב. הקטלוג מתארך בין 1898 ל-1914; מוצג על ציר הזמן מ-1898 (השנה המוקדמת הוודאית)."
+    },
+    {
+      "id": "from-clock-tower-east",
+      "title": "From Jaffa Gate clock tower east over center of Jerusalem",
+      "titleHe": "ממגדל השעון של שער יפו מזרחה, על פני מרכז ירושלים",
+      "year": 1908,
+      "yearDisplay": "1908–1922",
+      "coordinates": [35.2278, 31.7768],
+      "positionConfidence": "documented",
+      "sourceId": "american-colony-archive",
+      "itemUrl": "https://www.loc.gov/pictures/resource/ppmsca.04989/",
+      "notes": "Panorama taken from the top of the Ottoman clock tower itself — the camera position is exact (the tower), and the photo can only date from the tower's lifetime, 1908–1922. Doubles as documentation that the tower stood.",
+      "notesHe": "פנורמה שצולמה מראש מגדל השעון העות'מאני עצמו — מיקום המצלמה מדויק (המגדל), והתצלום יכול להיות רק מתקופת קיום המגדל, 1908–1922. משמש גם כתיעוד לקיומו."
+    }
+  ]
+}

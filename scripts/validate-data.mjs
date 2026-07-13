@@ -64,7 +64,31 @@ for (const file of FEATURE_FILES) {
   }
 }
 
+// --- viewpoints (camera anchors) ---
+const { viewpoints } = read("data/viewpoints.json");
+console.log(`\ndata/viewpoints.json — ${viewpoints.length} viewpoints`);
+for (const v of viewpoints) {
+  const id = v.id ?? "(no id)";
+  for (const field of ["id", "title", "year", "yearDisplay", "coordinates", "positionConfidence", "sourceId", "itemUrl"]) {
+    if (v[field] == null) fail(`[${id}] viewpoint missing "${field}"`);
+  }
+  if (v.sourceId && !sourceIds.has(v.sourceId)) {
+    fail(`[${id}] unknown sourceId "${v.sourceId}"`);
+  }
+  if (typeof v.year !== "number" || v.year < 1826 || v.year > 2030) {
+    // 1826 = earliest surviving photograph anywhere; nothing visual can predate
+    // drawing/lithography, and Roberts (1839) is our earliest item.
+    if (v.year < 1500) fail(`[${id}] implausible viewpoint year ${v.year}`);
+  }
+  if (v.itemUrl && !/^https:\/\/(www\.)?loc\.gov\//.test(v.itemUrl) && !/^https:\/\/(www\.)?nli\.org\.il\//.test(v.itemUrl)) {
+    fail(`[${id}] itemUrl not at a recognized holding institution: ${v.itemUrl}`);
+  }
+  if (!["documented", "approximate"].includes(v.positionConfidence)) {
+    fail(`[${id}] bad positionConfidence "${v.positionConfidence}"`);
+  }
+}
+
 console.log(
-  `\n${errors === 0 ? "✓" : "✗"} checked ${featureCount} features — ${errors} error(s)`,
+  `\n${errors === 0 ? "✓" : "✗"} checked ${featureCount} features + ${viewpoints.length} viewpoints — ${errors} error(s)`,
 );
 process.exit(errors === 0 ? 0 : 1);

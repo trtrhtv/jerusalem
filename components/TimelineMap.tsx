@@ -16,11 +16,59 @@ import {
   getSource,
   periodByKey,
   periods,
+  viewpoints,
+  viewpointsGeoJSON,
 } from "@/lib/data";
-import type { TimeFeature } from "@/lib/types";
+import type { TimeFeature, Viewpoint } from "@/lib/types";
 import { EvidencePanel } from "./EvidencePanel";
+import { ViewpointPanel } from "./ViewpointPanel";
 
 const SRC = "corridor";
+const VP_SRC = "viewpoints";
+const VP_LAYER = "viewpoint-camera";
+
+/**
+ * Draws the camera icon at runtime on a canvas — keeps the style fully
+ * self-contained (no sprite/glyph server dependency).
+ */
+function makeCameraIcon(): ImageData | null {
+  const s = 48;
+  const canvas = document.createElement("canvas");
+  canvas.width = s;
+  canvas.height = s;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+
+  // white disc with dark ring so it reads on any background
+  ctx.beginPath();
+  ctx.arc(s / 2, s / 2, s / 2 - 3, 0, Math.PI * 2);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#0369a1";
+  ctx.stroke();
+
+  // camera body
+  ctx.fillStyle = "#0369a1";
+  const bx = 12, by = 18, bw = 24, bh = 15, r = 3;
+  ctx.beginPath();
+  ctx.moveTo(bx + r, by);
+  ctx.arcTo(bx + bw, by, bx + bw, by + bh, r);
+  ctx.arcTo(bx + bw, by + bh, bx, by + bh, r);
+  ctx.arcTo(bx, by + bh, bx, by, r);
+  ctx.arcTo(bx, by, bx + bw, by, r);
+  ctx.closePath();
+  ctx.fill();
+  // viewfinder bump
+  ctx.fillRect(19, 14, 10, 5);
+  // lens
+  ctx.beginPath();
+  ctx.arc(s / 2, by + bh / 2, 4.5, 0, Math.PI * 2);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+
+  return ctx.getImageData(0, 0, s, s);
+}
 
 // period key -> color, flattened for a MapLibre "match" expression
 const periodColorMatch: ExpressionSpecification = [
@@ -98,6 +146,7 @@ export function TimelineMap() {
   const [ready, setReady] = useState(false);
   const [year, setYear] = useState<number>(TIMELINE.default);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedVpId, setSelectedVpId] = useState<string | null>(null);
 
   // A selection is only "effective" while its feature is visible at the current
   // year; scrolling the timeline past its window deselects it (derived, so no
@@ -107,8 +156,20 @@ export function TimelineMap() {
     return f && isVisibleAt(f, year) ? f : null;
   }, [selectedId, year]);
 
+  // Same rule for viewpoints: a photograph exists on the timeline only from
+  // the year it was made.
+  const selectedVp: Viewpoint | null = useMemo(() => {
+    const v = viewpoints.find((vp) => vp.id === selectedVpId) ?? null;
+    return v && v.year <= year ? v : null;
+  }, [selectedVpId, year]);
+
   const visibleFeatures = useMemo(
     () => corridor.features.filter((f) => isVisibleAt(f, year)),
+    [year],
+  );
+
+  const visibleVpCount = useMemo(
+    () => viewpoints.filter((v) => v.year <= year).length,
     [year],
   );
 
@@ -192,18 +253,53 @@ export function TimelineMap() {
         paint: { "line-color": "#111827", "line-width": 3.5 },
       });
 
+      // camera viewpoints (visual source anchors)
+      const icon = makeCameraIcon();
+      if (icon) map.addImage("camera-icon", icon, { pixelRatio: 2 });
+      map.addSource(VP_SRC, { type: "geojson", data: viewpointsGeoJSON() as never });
+      map.addLayer({
+        id: VP_LAYER,
+        type: "symbol",
+        source: VP_SRC,
+        layout: {
+          "icon-image": "camera-icon",
+          "icon-size": 1,
+          "icon-allow-overlap": true,
+        },
+      });
+
       for (const id of INTERACTIVE) {
         map.on("click", id, (e) => {
+          // cameras sit above features — if one was clicked, let it win
+          if (map.queryRenderedFeatures(e.point, { layers: [VP_LAYER] }).length) return;
           const f = e.features?.[0] as MapGeoJSONFeature | undefined;
           const fid = f?.properties?.id as string | undefined;
-          if (fid) setSelectedId(fid);
+          if (fid) {
+            setSelectedId(fid);
+            setSelectedVpId(null);
+          }
         });
         map.on("mouseenter", id, () => (map.getCanvas().style.cursor = "pointer"));
         map.on("mouseleave", id, () => (map.getCanvas().style.cursor = ""));
       }
+      map.on("click", VP_LAYER, (e) => {
+        const f = e.features?.[0] as MapGeoJSONFeature | undefined;
+        const vid = f?.properties?.id as string | undefined;
+        if (vid) {
+          setSelectedVpId(vid);
+          setSelectedId(null);
+        }
+      });
+      map.on("mouseenter", VP_LAYER, () => (map.getCanvas().style.cursor = "pointer"));
+      map.on("mouseleave", VP_LAYER, () => (map.getCanvas().style.cursor = ""));
       map.on("click", (e) => {
-        const hits = map.queryRenderedFeatures(e.point, { layers: INTERACTIVE });
-        if (hits.length === 0) setSelectedId(null);
+        const hits = map.queryRenderedFeatures(e.point, {
+          layers: [...INTERACTIVE, VP_LAYER],
+        });
+        if (hits.length === 0) {
+          setSelectedId(null);
+          setSelectedVpId(null);
+        }
       });
 
       map.off("styledata", setup);
@@ -227,6 +323,8 @@ export function TimelineMap() {
     for (const [id, base] of Object.entries(BASE_FILTERS)) {
       map.setFilter(id, composeTimeFilter(base, year));
     }
+    // a photograph exists on the timeline only from the year it was made
+    map.setFilter(VP_LAYER, ["<=", ["get", "year"], year]);
   }, [year, ready]);
 
   // --- selection highlight (follows the derived, visibility-aware selection) ---
@@ -259,6 +357,7 @@ export function TimelineMap() {
             </span>
             <span className="text-xs text-neutral-500">
               {visibleFeatures.length} אלמנטים גלויים
+              {visibleVpCount > 0 && ` · 📷 ${visibleVpCount}`}
             </span>
           </div>
           {/* LTR so the timeline reads chronologically: drag right = later. */}
@@ -307,6 +406,9 @@ export function TimelineMap() {
           </div>
           <p className="border-t border-black/10 pt-2 text-[10px] leading-snug text-neutral-500 dark:border-white/10">
             צבע = תקופת בנייה. קו מקווקו = ודאות נמוכה יותר. לחצו על אלמנט לפירוט המקור.
+            <br />
+            📷 = תצלום/ליתוגרפיה היסטוריים מהמקום — מופיעים על ציר הזמן משנת יצירתם
+            (לפני 1839 אין תיעוד חזותי, והמפה מציגה זאת בכנות).
           </p>
         </div>
       </div>
@@ -318,6 +420,15 @@ export function TimelineMap() {
           getSource={getSource}
           period={periodByKey[selected.properties.builtPeriod]}
           onClose={() => setSelectedId(null)}
+        />
+      )}
+
+      {/* Photo viewpoint panel (right) */}
+      {!selected && selectedVp && (
+        <ViewpointPanel
+          viewpoint={selectedVp}
+          source={getSource(selectedVp.sourceId)}
+          onClose={() => setSelectedVpId(null)}
         />
       )}
     </div>
