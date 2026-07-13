@@ -128,7 +128,27 @@ for (const el of walk.elements) {
   }
 }
 
+// --- historic map overlays ---
+const { maps: historicMaps } = read("data/historic-maps.json");
+console.log(`\ndata/historic-maps.json — ${historicMaps.length} maps`);
+for (const m of historicMaps) {
+  const id = m.id ?? "(no id)";
+  for (const field of ["id", "title", "titleHe", "year", "sourceId", "status", "defaultOpacity"]) {
+    if (m[field] == null) fail(`[${id}] historic map missing "${field}"`);
+  }
+  if (m.sourceId && !sourceIds.has(m.sourceId)) fail(`[${id}] unknown sourceId "${m.sourceId}"`);
+  if (!["ready", "awaiting-georeference"].includes(m.status)) {
+    fail(`[${id}] bad status "${m.status}"`);
+  }
+  if (m.status === "ready" && !/^https:\/\//.test(m.annotationUrl ?? "")) {
+    fail(`[${id}] status=ready requires an https annotationUrl`);
+  }
+  if (m.status !== "ready" && m.annotationUrl) {
+    fail(`[${id}] has annotationUrl but status is not "ready" — set status accordingly`);
+  }
+}
+
 console.log(
-  `\n${errors === 0 ? "✓" : "✗"} checked ${featureCount} features + ${viewpoints.length} viewpoints + ${walk.elements.length} walk elements — ${errors} error(s)`,
+  `\n${errors === 0 ? "✓" : "✗"} checked ${featureCount} features + ${viewpoints.length} viewpoints + ${walk.elements.length} walk elements + ${historicMaps.length} historic maps — ${errors} error(s)`,
 );
 process.exit(errors === 0 ? 0 : 1);

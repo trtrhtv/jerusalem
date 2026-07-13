@@ -1,0 +1,17 @@
+{
+  "$comment": "Registry of georeferenced historical map overlays. Each entry becomes a toggleable warped layer on the timeline map (via @allmaps/maplibre, loaded on demand). status='ready' requires annotationUrl — a Georeference Annotation produced with editor.allmaps.org (see docs/WILSON-GEOREF.md for the workflow). Entries without georeferencing yet are shown greyed out in the UI, honestly marked as awaiting alignment. Never point annotationUrl at a scan that has not actually been georeferenced.",
+  "maps": [
+    {
+      "id": "wilson-1865",
+      "title": "Ordnance Survey of Jerusalem (Wilson), 1864–65",
+      "titleHe": "מדידת וילסון 1865",
+      "year": 1865,
+      "sourceId": "wilson-1865",
+      "annotationUrl": null,
+      "status": "awaiting-georeference",
+      "defaultOpacity": 0.75,
+      "notes": "The first scientific survey of Jerusalem. Once georeferenced (docs/WILSON-GEOREF.md), this becomes the base for tracing surveyed building footprints — and a viewable layer under the timeline map.",
+      "notesHe": "המיפוי המדעי הראשון של ירושלים. אחרי יישור גיאוגרפי (ראו docs/WILSON-GEOREF.md) המפה תשמש בסיס לדיגיטציה של מתארי מבנים מדודים — ושכבה לצפייה מתחת למפת ציר-הזמן."
+    }
+  ]
+}

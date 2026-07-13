@@ -20,8 +20,15 @@ import {
   viewpointsGeoJSON,
 } from "@/lib/data";
 import type { TimeFeature, Viewpoint } from "@/lib/types";
+import { historicMaps, type HistoricMapDef } from "@/lib/historicMaps";
 import { EvidencePanel } from "./EvidencePanel";
 import { ViewpointPanel } from "./ViewpointPanel";
+
+/** Minimal surface of @allmaps/maplibre's WarpedMapLayer we rely on. */
+interface WarpedLayerLike {
+  addGeoreferenceAnnotationByUrl: (url: string) => Promise<unknown>;
+  setOpacity: (o: number) => void;
+}
 
 const SRC = "corridor";
 const VP_SRC = "viewpoints";
@@ -159,6 +166,42 @@ export function TimelineMap() {
   const [year, setYear] = useState<number>(initialYear);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedVpId, setSelectedVpId] = useState<string | null>(null);
+  const [enabledHistoric, setEnabledHistoric] = useState<Set<string>>(new Set());
+  const [historicBusy, setHistoricBusy] = useState<string | null>(null);
+  const warpedLayersRef = useRef<Map<string, WarpedLayerLike>>(new Map());
+
+  const toggleHistoricMap = async (m: HistoricMapDef) => {
+    const map = mapRef.current;
+    if (!map || m.status !== "ready" || !m.annotationUrl || historicBusy) return;
+    const layerId = `historic-${m.id}`;
+    if (enabledHistoric.has(m.id)) {
+      if (map.getLayer(layerId)) map.removeLayer(layerId);
+      warpedLayersRef.current.delete(m.id);
+      setEnabledHistoric((s) => {
+        const n = new Set(s);
+        n.delete(m.id);
+        return n;
+      });
+      return;
+    }
+    setHistoricBusy(m.id);
+    try {
+      // heavy dependency — load only when a historical layer is switched on
+      const { WarpedMapLayer } = await import("@allmaps/maplibre");
+      const layer = new WarpedMapLayer({ layerId }) as unknown as WarpedLayerLike;
+      // insert under our vector layers so the history stays readable on top
+      map.addLayer(layer as never, "poly-fill");
+      await layer.addGeoreferenceAnnotationByUrl(m.annotationUrl);
+      layer.setOpacity(m.defaultOpacity);
+      warpedLayersRef.current.set(m.id, layer);
+      setEnabledHistoric((s) => new Set(s).add(m.id));
+    } catch (err) {
+      console.warn("historic map failed to load:", m.id, err);
+      if (map.getLayer(layerId)) map.removeLayer(layerId);
+    } finally {
+      setHistoricBusy(null);
+    }
+  };
 
   // A selection is only "effective" while its feature is visible at the current
   // year; scrolling the timeline past its window deselects it (derived, so no
@@ -439,6 +482,44 @@ export function TimelineMap() {
             📷 = תצלום/ליתוגרפיה היסטוריים מהמקום — מופיעים על ציר הזמן משנת יצירתם
             (לפני 1839 אין תיעוד חזותי, והמפה מציגה זאת בכנות).
           </p>
+        </div>
+      </div>
+
+      {/* Historic map layers (bottom-right) */}
+      <div className="pointer-events-none absolute bottom-0 right-0 z-10 p-3">
+        <div className="pointer-events-auto max-w-56 rounded-xl border border-black/10 bg-white/90 p-3 text-xs shadow-lg backdrop-blur dark:border-white/10 dark:bg-neutral-900/90">
+          <div className="mb-1.5 font-semibold">🗺️ מפות היסטוריות</div>
+          <ul className="space-y-1.5">
+            {historicMaps.map((m) => (
+              <li key={m.id}>
+                {m.status === "ready" ? (
+                  <label className="flex cursor-pointer items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={enabledHistoric.has(m.id)}
+                      disabled={historicBusy === m.id}
+                      onChange={() => toggleHistoricMap(m)}
+                      className="accent-neutral-800 dark:accent-neutral-200"
+                    />
+                    <span>
+                      {m.titleHe}
+                      {historicBusy === m.id && " ⏳"}
+                    </span>
+                  </label>
+                ) : (
+                  <div className="flex items-center gap-2 text-neutral-400">
+                    <span className="inline-block h-3 w-3 rounded-sm border border-dashed border-neutral-400" />
+                    <span>
+                      {m.titleHe}
+                      <span className="block text-[10px]">
+                        ממתינה ליישור גיאוגרפי (docs/WILSON-GEOREF.md)
+                      </span>
+                    </span>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 

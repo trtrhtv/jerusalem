@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { baseStyle } from "@/lib/mapStyle";
 import { evidenceTierMeta, getSource } from "@/lib/data";
 import {
   elementExistsAt,
@@ -14,6 +17,17 @@ import type { EvidenceTier } from "@/lib/types";
 const EYE_HEIGHT = 1.7;
 const WALK_SPEED = 9; // m/s (brisk walk — the area is large)
 const BOUND = 200;
+
+/**
+ * Local scene meters → WGS84, anchored at the scene origin (the Jaffa Gate
+ * plaza). +x = east, +z = south. Good to well under a meter at this scale.
+ */
+function localToLngLat(x: number, z: number): [number, number] {
+  const { lon, lat } = walkScene.anchor;
+  const mPerDegLat = 110574;
+  const mPerDegLon = 111320 * Math.cos((lat * Math.PI) / 180);
+  return [lon + x / mPerDegLon, lat - z / mPerDegLat];
+}
 
 // Jerusalem-stone palette per element kind; evidence tier controls opacity.
 const KIND_COLOR: Record<WalkElement["kind"], number> = {
@@ -115,6 +129,7 @@ function initialWalkYear(): number {
 
 export function WalkScene() {
   const mountRef = useRef<HTMLDivElement | null>(null);
+  const minimapRef = useRef<HTMLDivElement | null>(null);
   const startedRef = useRef(false);
   const meshIndexRef = useRef<Map<string, THREE.Object3D>>(new Map());
   const yearRef = useRef(walkScene.defaultYear);
@@ -186,6 +201,31 @@ export function WalkScene() {
     controls.addEventListener("lock", () => setLocked(true));
     controls.addEventListener("unlock", () => setLocked(false));
 
+    // --- present-day minimap: where you are relative to today's city ---
+    let minimap: maplibregl.Map | null = null;
+    let miniMarker: maplibregl.Marker | null = null;
+    if (minimapRef.current) {
+      minimap = new maplibregl.Map({
+        container: minimapRef.current,
+        style: baseStyle,
+        center: localToLngLat(camera.position.x, camera.position.z),
+        zoom: 16.3,
+        interactive: false,
+        attributionControl: false,
+      });
+      const arrow = document.createElement("div");
+      arrow.style.cssText =
+        "width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:16px solid #dc2626;filter:drop-shadow(0 0 2px #fff)";
+      miniMarker = new maplibregl.Marker({
+        element: arrow,
+        rotationAlignment: "map",
+      })
+        .setLngLat(localToLngLat(camera.position.x, camera.position.z))
+        .addTo(minimap);
+    }
+    let miniAccum = 0;
+    const camDir = new THREE.Vector3();
+
     const keys = new Set<string>();
     const onKeyDown = (e: KeyboardEvent) => keys.add(e.code);
     const onKeyUp = (e: KeyboardEvent) => keys.delete(e.code);
@@ -242,12 +282,24 @@ export function WalkScene() {
         camera.position.x = THREE.MathUtils.clamp(camera.position.x, -BOUND, BOUND);
         camera.position.z = THREE.MathUtils.clamp(camera.position.z, -BOUND, BOUND);
       }
+      // update the present-day minimap ~5×/sec
+      miniAccum += dt;
+      if (minimap && miniMarker && miniAccum > 0.2) {
+        miniAccum = 0;
+        const lngLat = localToLngLat(camera.position.x, camera.position.z);
+        miniMarker.setLngLat(lngLat);
+        camera.getWorldDirection(camDir);
+        // north = -z, east = +x → compass bearing
+        miniMarker.setRotation((Math.atan2(camDir.x, -camDir.z) * 180) / Math.PI);
+        minimap.setCenter(lngLat);
+      }
       renderer.render(scene, camera);
     };
     animate();
 
     return () => {
       cancelAnimationFrame(raf);
+      minimap?.remove();
       window.removeEventListener("resize", onResize);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
@@ -325,6 +377,16 @@ export function WalkScene() {
           +
         </div>
       )}
+
+      {/* present-day minimap: your position vs. today's city */}
+      <div className="pointer-events-none absolute bottom-0 right-0 z-10 p-3">
+        <div className="overflow-hidden rounded-xl border border-black/20 shadow-lg">
+          <div ref={minimapRef} className="h-44 w-44 bg-[#efe9df]" dir="ltr" />
+          <div className="bg-white/90 px-2 py-0.5 text-center text-[10px] text-neutral-500 backdrop-blur dark:bg-neutral-900/90">
+            מיקומך על מפת היום ⟵ ההדמיה: {year}
+          </div>
+        </div>
+      </div>
 
       {/* evidence legend (3D variant) */}
       <div className="pointer-events-none absolute bottom-0 left-0 z-10 p-3">
