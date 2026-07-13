@@ -1,0 +1,260 @@
+{
+  "type": "FeatureCollection",
+  "name": "Jaffa Gate – Jaffa Road corridor (pilot)",
+  "metadata": {
+    "descriptionHe": "אזור הפיילוט: ציר שער יפו–רחוב יפו. הנתונים מבוססים על עובדות היסטוריות מתועדות (תאריכי ייסוד, מפת וילסון 1865, ארכיון המושבה האמריקאית). הגאומטריה מוערכת ומסומנת ב-geometryConfidence עד לדיגיטציה מיושרת של המפות ההיסטוריות. אין נתונים מומצאים.",
+    "descriptionEn": "Pilot area: the Jaffa Gate–Jaffa Road axis. Built periods and types rest on documented history (founding dates, the Wilson 1865 survey, the American Colony archive). Geometry is estimated and flagged via geometryConfidence pending georeferenced digitization of the historical maps. Nothing here is invented.",
+    "coordinateSystem": "WGS84 (lon, lat)",
+    "lastReviewed": "2026-07-13"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [35.2277, 31.7767] },
+      "properties": {
+        "id": "jaffa-gate",
+        "name": "Jaffa Gate (Bab al-Khalil)",
+        "nameHe": "שער יפו (באב אל-ח'ליל)",
+        "builtPeriod": "ottoman-early",
+        "builtYear": 1538,
+        "buildingType": "gate",
+        "evidenceTier": "documented",
+        "geometryConfidence": "approximate",
+        "sources": ["wilson-1865", "roberts-holy-land-1842", "american-colony-archive"],
+        "notes": "Built into Suleiman the Magnificent's city wall (1537–1541). Extant; appears in Wilson's 1865 survey and in Roberts' lithographs.",
+        "notesHe": "נבנה בחומת סולימאן המפואר (1537–1541). קיים; מופיע במדידת וילסון 1865 ובליתוגרפיות רוברטס."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [35.2272, 31.7757],
+            [35.2281, 31.7758],
+            [35.228, 31.7763],
+            [35.2271, 31.7762],
+            [35.2272, 31.7757]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "tower-of-david-citadel",
+        "name": "Tower of David / The Citadel",
+        "nameHe": "מגדל דוד / המצודה",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "fortification",
+        "evidenceTier": "documented",
+        "geometryConfidence": "approximate",
+        "sources": ["wilson-1865", "illes-relief-1873", "roberts-holy-land-1842"],
+        "notes": "Citadel on Herodian foundations; present form largely Mamluk (rebuilt 1310) with Ottoman additions (minaret 1635). Documented in the Wilson survey and the Illés relief.",
+        "notesHe": "מצודה על יסודות הרודיאניים; צורתה הנוכחית ברובה ממלוכית (בנייה מחדש 1310) עם תוספות עות'מאניות (המינרט 1635). מתועדת במדידת וילסון ובתבליט אילש."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [35.2276, 31.7765] },
+      "properties": {
+        "id": "jaffa-gate-breach",
+        "name": "Jaffa Gate wall breach & ramp",
+        "nameHe": "פרצת החומה והכבש בשער יפו",
+        "builtPeriod": "ottoman-late",
+        "builtYear": 1898,
+        "buildingType": "road",
+        "evidenceTier": "documented",
+        "geometryConfidence": "approximate",
+        "sources": ["american-colony-archive", "bavarian-aerial-1918"],
+        "notes": "The wall beside the citadel was breached and part of the moat filled to make a carriage ramp for Kaiser Wilhelm II's 1898 visit — the road cars still use. Documented in period photographs.",
+        "notesHe": "החומה ליד המצודה נפרצה וחלק מהחפיר מולא לכבש מרכבות לרגל ביקור הקיסר וילהלם השני ב-1898 — הכביש שבו נוסעים עד היום. מתועד בתצלומי התקופה."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [35.2278, 31.7768] },
+      "properties": {
+        "id": "jaffa-gate-clock-tower",
+        "name": "Ottoman clock tower over Jaffa Gate",
+        "nameHe": "מגדל השעון העות'מאני מעל שער יפו",
+        "builtPeriod": "ottoman-late",
+        "builtYear": 1908,
+        "demolishedYear": 1922,
+        "buildingType": "monument",
+        "evidenceTier": "documented",
+        "geometryConfidence": "approximate",
+        "sources": ["american-colony-archive"],
+        "notes": "A ~13 m ornate clock tower built atop the gate tower (clock 1907, tower 1908) for Sultan Abdul Hamid II's jubilee; demolished by the British in 1922. A time-bounded feature: appears 1908, gone after 1922. Well documented in photographs.",
+        "notesHe": "מגדל שעון מעוטר בגובה ~13 מ' מעל מגדל השער (השעון 1907, המגדל 1908) ליובל הסולטאן עבד אל-חמיד השני; נהרס בידי הבריטים ב-1922. אלמנט תחום-בזמן: מופיע ב-1908, נעלם אחרי 1922. מתועד היטב בצילומים."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [35.2277, 31.7767],
+          [35.2258, 31.7778],
+          [35.223, 31.7792],
+          [35.22, 31.7805],
+          [35.2175, 31.7815]
+        ]
+      },
+      "properties": {
+        "id": "jaffa-road",
+        "name": "Jaffa Road (Derekh Yafo)",
+        "nameHe": "רחוב יפו (דרך יפו)",
+        "builtPeriod": "ottoman-late",
+        "builtYear": 1860,
+        "builtYearApprox": true,
+        "buildingType": "road",
+        "evidenceTier": "documented",
+        "geometryConfidence": "schematic",
+        "sources": ["wilson-1865", "osm"],
+        "notes": "The road from Jaffa Gate toward Jaffa, developed into the city's main western artery through the late Ottoman period (carriage road improvements from the 1860s). Route shown on the Wilson survey; alignment here is schematic pending georeferencing.",
+        "notesHe": "הדרך משער יפו לכיוון יפו, שהתפתחה לעורק המערבי הראשי של העיר בתקופה העות'מאנית המאוחרת (שיפור לדרך מרכבות מ-1860). התוואי מופיע במדידת וילסון; היישור כאן סכמטי עד ליישור גיאוגרפי."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [35.2255, 31.7722],
+            [35.2266, 31.7723],
+            [35.2265, 31.7729],
+            [35.2254, 31.7728],
+            [35.2255, 31.7722]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "mishkenot-shaananim",
+        "name": "Mishkenot Sha'ananim",
+        "nameHe": "משכנות שאננים",
+        "builtPeriod": "ottoman-late",
+        "builtYear": 1860,
+        "buildingType": "residential-quarter",
+        "evidenceTier": "documented",
+        "geometryConfidence": "approximate",
+        "sources": ["neighborhood-founding-record", "wilson-1865"],
+        "notes": "The first Jewish neighborhood built outside the Old City walls (1859–1860), funded by Moses Montefiore. Southwest of the corridor, across the Hinnom valley. Extant.",
+        "notesHe": "השכונה היהודית הראשונה שנבנתה מחוץ לחומות (1859–1860), במימון משה מונטיפיורי. דרום-מערבית לציר, מעבר לגיא בן הינום. קיימת."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [35.2246, 31.777],
+            [35.2254, 31.7771],
+            [35.2253, 31.7776],
+            [35.2245, 31.7775],
+            [35.2246, 31.777]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "mahane-israel",
+        "name": "Mahane Israel",
+        "nameHe": "מחנה ישראל",
+        "builtPeriod": "ottoman-late",
+        "builtYear": 1868,
+        "buildingType": "residential-quarter",
+        "evidenceTier": "documented",
+        "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notes": "The second Jewish neighborhood outside the walls (1868), founded by the Maghrebi (North African) community near Mamilla, just northwest of Jaffa Gate. Footprint schematic.",
+        "notesHe": "השכונה היהודית השנייה מחוץ לחומות (1868), שהוקמה בידי הקהילה המערבית (צפון-אפריקאית) באזור ממילא, מצפון-מערב לשער יפו. המתאר סכמטי."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [35.218, 31.7804],
+            [35.2191, 31.7805],
+            [35.219, 31.7811],
+            [35.2179, 31.781],
+            [35.218, 31.7804]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "nahalat-shiva",
+        "name": "Nahalat Shiv'a",
+        "nameHe": "נחלת שבעה",
+        "builtPeriod": "ottoman-late",
+        "builtYear": 1869,
+        "buildingType": "residential-quarter",
+        "evidenceTier": "documented",
+        "geometryConfidence": "approximate",
+        "sources": ["neighborhood-founding-record", "osm"],
+        "notes": "Founded 1869 by seven families; its layout was drawn toward the valuable land along Jaffa Road. The street fabric survives today, which lets present-day OSM footprints anchor the historic block.",
+        "notesHe": "נוסדה ב-1869 בידי שבע משפחות; התוכנית נמשכה אל הקרקע היקרה שלאורך רחוב יפו. מארג הרחובות קיים עד היום, ולכן מתארי OSM של ימינו יכולים לעגן את הגוש ההיסטורי."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [35.2196, 31.7812],
+            [35.2216, 31.7814],
+            [35.2214, 31.7825],
+            [35.2194, 31.7823],
+            [35.2196, 31.7812]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "russian-compound",
+        "name": "Russian Compound",
+        "nameHe": "מגרש הרוסים",
+        "builtPeriod": "ottoman-late",
+        "builtYear": 1860,
+        "buildingType": "religious-compound",
+        "evidenceTier": "documented",
+        "geometryConfidence": "approximate",
+        "sources": ["neighborhood-founding-record", "wilson-1865", "american-colony-archive"],
+        "notes": "Built 1860–1864 by the Imperial Orthodox Palestine Society for Russian pilgrims; Holy Trinity Cathedral completed 1872. North of Jaffa Road. Appears on the Wilson survey.",
+        "notesHe": "נבנה 1860–1864 בידי החברה הקיסרית האורתודוקסית לארץ הקודש עבור עולי הרגל הרוסים; קתדרלת השילוש הקדוש הושלמה ב-1872. מצפון לרחוב יפו. מופיע במדידת וילסון."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [35.2232, 31.7776],
+            [35.2249, 31.7778],
+            [35.2247, 31.7788],
+            [35.223, 31.7786],
+            [35.2232, 31.7776]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "mamilla",
+        "name": "Mamilla",
+        "nameHe": "ממילא",
+        "builtPeriod": "ottoman-late",
+        "builtYear": 1870,
+        "builtYearApprox": true,
+        "buildingType": "mixed",
+        "evidenceTier": "typological",
+        "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notes": "Mixed residential/commercial area that grew west of Jaffa Gate in the late 19th century. Its exact founding and footprint are less precisely documented than the dated neighborhoods, so this is typological: we know a late-Ottoman mixed build-up was here, not each building. Marked accordingly.",
+        "notesHe": "אזור מגורים/מסחר מעורב שהתפתח ממערב לשער יפו בשלהי המאה ה-19. הייסוד והמתאר המדויקים מתועדים פחות מהשכונות המתוארכות, ולכן זו רמת 'טיפולוגי': ידוע שהיה כאן בינוי מעורב עות'מאני מאוחר, לא כל מבנה. מסומן בהתאם."
+      }
+    }
+  ]
+}

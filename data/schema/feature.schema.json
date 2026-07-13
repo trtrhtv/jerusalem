@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jerusalem-time-layers/schema/feature.schema.json",
+  "title": "TimeFeature",
+  "description": "A single map feature (building, block, monument, road) anchored to a build period, a building type, an evidence tier and its sources. See README 'מדרג הראיות'. Geometry follows GeoJSON; the domain fields live in `properties`.",
+  "type": "object",
+  "required": ["type", "geometry", "properties"],
+  "additionalProperties": false,
+  "properties": {
+    "type": { "const": "Feature" },
+    "geometry": {
+      "type": "object",
+      "required": ["type", "coordinates"],
+      "properties": {
+        "type": { "enum": ["Point", "LineString", "Polygon"] },
+        "coordinates": {}
+      }
+    },
+    "properties": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "builtPeriod",
+        "builtYear",
+        "buildingType",
+        "evidenceTier",
+        "geometryConfidence",
+        "sources"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Stable slug identifier."
+        },
+        "name": { "type": "string" },
+        "nameHe": { "type": "string" },
+        "builtPeriod": {
+          "enum": [
+            "second-temple",
+            "byzantine",
+            "crusader",
+            "ayyubid",
+            "mamluk",
+            "ottoman-early",
+            "ottoman-late",
+            "british-mandate",
+            "modern"
+          ]
+        },
+        "builtYear": {
+          "type": ["integer", "null"],
+          "description": "Specific construction/founding year (CE). null when only the period is known."
+        },
+        "builtYearApprox": {
+          "type": "boolean",
+          "description": "true if builtYear is a best estimate rather than a documented date."
+        },
+        "demolishedYear": {
+          "type": ["integer", "null"],
+          "description": "Year the feature ceased to exist; null/absent if it still stands."
+        },
+        "buildingType": {
+          "enum": [
+            "gate",
+            "fortification",
+            "road",
+            "monument",
+            "residential-quarter",
+            "religious-compound",
+            "institution",
+            "commercial",
+            "mixed"
+          ]
+        },
+        "evidenceTier": {
+          "enum": ["documented", "typological", "conjecture"],
+          "description": "Confidence in existence/period/type. documented=מתועד, typological=טיפולוגי, conjecture=השערה."
+        },
+        "geometryConfidence": {
+          "enum": ["surveyed", "approximate", "schematic"],
+          "description": "Confidence in the drawn shape. Kept independent of evidenceTier on purpose."
+        },
+        "sources": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IDs referencing data/sources.json. May be empty ONLY for evidenceTier=conjecture.",
+          "uniqueItems": true
+        },
+        "notes": { "type": "string" },
+        "notesHe": { "type": "string" }
+      },
+      "allOf": [
+        {
+          "$comment": "Integrity rule: anything not a pure conjecture must cite at least one source.",
+          "if": {
+            "properties": {
+              "evidenceTier": { "enum": ["documented", "typological"] }
+            }
+          },
+          "then": {
+            "properties": { "sources": { "minItems": 1 } }
+          }
+        }
+      ]
+    }
+  }
+}

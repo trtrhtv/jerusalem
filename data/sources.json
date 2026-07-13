@@ -1,0 +1,113 @@
+{
+  "$comment": "Source registry. Rights verified July 2026. 'public-domain' = published before 1928 (public domain in the US and, for these works, worldwide). 'reference-only' = modern reconstruction, used to inform our own low-poly work, NOT copied or hosted. Features reference these by id via properties.sources[].",
+  "sources": {
+    "wilson-1865": {
+      "id": "wilson-1865",
+      "title": "Ordnance Survey of Jerusalem",
+      "titleHe": "מדידת המהנדסים המלכותיים של ירושלים",
+      "creator": "Capt. Charles W. Wilson, R.E.",
+      "year": "1864–1865",
+      "type": "survey",
+      "rights": "public-domain",
+      "rightsNote": "First scientific survey of Jerusalem (1:2500 / 1:10000). Published 1865–66; public domain.",
+      "holdingInstitution": "National Library of Israel; Library of Congress; Huntington Digital Library",
+      "url": "https://www.nli.org.il/en/maps/NNL_ALEPH990023682170205171/NLI"
+    },
+    "illes-relief-1873": {
+      "id": "illes-relief-1873",
+      "title": "Illés Relief of Jerusalem (1:500 model)",
+      "titleHe": "תבליט אילש של ירושלים (דגם 1:500)",
+      "creator": "Stefan Illés",
+      "year": "1873",
+      "type": "physical-model",
+      "rights": "public-domain",
+      "rightsNote": "1:500 relief built for the 1873 Vienna World's Fair, based on the Wilson survey and Conrad Schick's research. The historical model itself is public domain; modern digitizations (Virtual Illés Relief) carry their own terms — reference-only.",
+      "holdingInstitution": "Historical Museum of Geneva (original); Tower of David Museum",
+      "url": "https://en.wikipedia.org/wiki/Ill%C3%A9s_Relief"
+    },
+    "roberts-holy-land-1842": {
+      "id": "roberts-holy-land-1842",
+      "title": "The Holy Land, Syria, Idumea, Arabia, Egypt & Nubia (lithographs)",
+      "titleHe": "ליתוגרפיות ארץ הקודש",
+      "creator": "David Roberts, lith. Louis Haghe",
+      "year": "1842–1849",
+      "type": "lithograph",
+      "rights": "public-domain",
+      "rightsNote": "247 lithographs from on-the-spot 1839 drawings. Library of Congress: 'no known restrictions on publication.'",
+      "holdingInstitution": "Library of Congress; Metropolitan Museum of Art",
+      "url": "https://www.loc.gov/item/2002717458/"
+    },
+    "american-colony-archive": {
+      "id": "american-colony-archive",
+      "title": "American Colony / Matson Photograph Collection",
+      "titleHe": "ארכיון הצילום של המושבה האמריקאית",
+      "creator": "American Colony Photo Department (Matson)",
+      "year": "c. 1898–1946",
+      "type": "photograph",
+      "rights": "public-domain",
+      "rightsNote": "Library of Congress: 'no known restrictions on publication' for the Matson (G. Eric and Edith Matson) Collection. Confirm per-image; most pre-1928 images are clear.",
+      "holdingInstitution": "Library of Congress, Prints & Photographs Division",
+      "url": "https://www.loc.gov/collections/g-eric-and-edith-matson-photographs/"
+    },
+    "bavarian-aerial-1918": {
+      "id": "bavarian-aerial-1918",
+      "title": "German (Bavarian) aerial photographs of Jerusalem",
+      "titleHe": "תצלומי אוויר גרמניים של ירושלים",
+      "creator": "Bayerisches Fliegerkorps",
+      "year": "1917/18",
+      "type": "aerial-photograph",
+      "rights": "public-domain",
+      "rightsNote": "WWI-era aerial reconnaissance; pre-1928, public domain. Stereo pairs allow extraction of real building heights for low-poly reconstruction.",
+      "holdingInstitution": "Bayerisches Hauptstaatsarchiv",
+      "url": "https://en.wikipedia.org/wiki/Aerial_photography"
+    },
+    "osm": {
+      "id": "osm",
+      "title": "OpenStreetMap",
+      "titleHe": "OpenStreetMap",
+      "creator": "OpenStreetMap contributors",
+      "year": "present",
+      "type": "map",
+      "rights": "open-license",
+      "rightsNote": "Open Database License (ODbL). Used for present-day street fabric and base geometry; attribution required.",
+      "holdingInstitution": "OpenStreetMap Foundation",
+      "url": "https://www.openstreetmap.org/copyright"
+    },
+    "neighborhood-founding-record": {
+      "id": "neighborhood-founding-record",
+      "title": "Historical record of the founding of Jerusalem's neighborhoods outside the walls",
+      "titleHe": "רשומות ייסוד השכונות שמחוץ לחומות",
+      "creator": "Multiple (documentary record)",
+      "year": "19th–20th c.",
+      "type": "documentary-record",
+      "rights": "public-domain",
+      "rightsNote": "Founding dates of the early neighborhoods are well-established historical facts (deeds, cornerstone records, contemporary press). Exact footprints still require georeferenced digitization.",
+      "holdingInstitution": "Various archives",
+      "url": "https://en.wikipedia.org/wiki/Nahalat_Shiv%27a"
+    },
+    "burgoyne-mamluk-1987": {
+      "id": "burgoyne-mamluk-1987",
+      "title": "Mamluk Jerusalem: An Architectural Study",
+      "titleHe": "ירושלים הממלוכית (סקר בורגוין)",
+      "creator": "Michael Hamilton Burgoyne",
+      "year": "1987",
+      "type": "scholarly-model",
+      "rights": "reference-only",
+      "rightsNote": "Definitive architectural survey of Mamluk buildings. Copyrighted scholarship — used as research reference for typology, not reproduced.",
+      "holdingInstitution": "British School of Archaeology in Jerusalem",
+      "url": "https://www.worldcat.org/title/mamluk-jerusalem/oclc/17300426"
+    },
+    "madaba-map": {
+      "id": "madaba-map",
+      "title": "Madaba Mosaic Map",
+      "titleHe": "מפת מידבא",
+      "creator": "Unknown (Byzantine mosaicists)",
+      "year": "6th century CE",
+      "type": "map",
+      "rights": "public-domain",
+      "rightsNote": "Byzantine floor mosaic depicting Jerusalem with the colonnaded Cardo. Public domain; used as a documented anchor for the Byzantine layer.",
+      "holdingInstitution": "Church of Saint George, Madaba",
+      "url": "https://en.wikipedia.org/wiki/Madaba_Map"
+    }
+  }
+}

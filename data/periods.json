@@ -1,0 +1,74 @@
+[
+  {
+    "key": "second-temple",
+    "label": "Second Temple",
+    "labelHe": "בית שני",
+    "start": -516,
+    "end": 70,
+    "color": "#b08968"
+  },
+  {
+    "key": "byzantine",
+    "label": "Byzantine",
+    "labelHe": "ביזנטית",
+    "start": 324,
+    "end": 638,
+    "color": "#7f5539"
+  },
+  {
+    "key": "crusader",
+    "label": "Crusader",
+    "labelHe": "צלבנית",
+    "start": 1099,
+    "end": 1187,
+    "color": "#9e2a2b"
+  },
+  {
+    "key": "ayyubid",
+    "label": "Ayyubid",
+    "labelHe": "איובית",
+    "start": 1187,
+    "end": 1250,
+    "color": "#bc6c25"
+  },
+  {
+    "key": "mamluk",
+    "label": "Mamluk",
+    "labelHe": "ממלוכית",
+    "start": 1250,
+    "end": 1517,
+    "color": "#dda15e"
+  },
+  {
+    "key": "ottoman-early",
+    "label": "Early Ottoman",
+    "labelHe": "עות'מאנית מוקדמת",
+    "start": 1517,
+    "end": 1840,
+    "color": "#606c38"
+  },
+  {
+    "key": "ottoman-late",
+    "label": "Late Ottoman",
+    "labelHe": "עות'מאנית מאוחרת",
+    "start": 1840,
+    "end": 1917,
+    "color": "#283618"
+  },
+  {
+    "key": "british-mandate",
+    "label": "British Mandate",
+    "labelHe": "מנדט בריטי",
+    "start": 1917,
+    "end": 1948,
+    "color": "#457b9d"
+  },
+  {
+    "key": "modern",
+    "label": "Modern",
+    "labelHe": "מודרנית",
+    "start": 1948,
+    "end": null,
+    "color": "#1d3557"
+  }
+]
