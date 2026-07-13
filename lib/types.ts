@@ -134,6 +134,13 @@ export interface Viewpoint {
   itemUrl: string;
   /** Reproduction / call number at the institution, when known. */
   reproductionNumber?: string;
+  /**
+   * Path (under public/) of a locally hosted copy of the image, e.g.
+   * "/photos/jaffa-gate-matson.jpg". Only for public-domain items; every
+   * hosted file must be credited in public/photos/ATTRIBUTION.md. When absent
+   * the panel falls back to the catalog link.
+   */
+  localImage?: string;
   notes?: string;
   notesHe?: string;
 }

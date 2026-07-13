@@ -6,7 +6,7 @@
 //
 // Run: npm run validate
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import Ajv from "ajv/dist/2020.js";
@@ -86,6 +86,18 @@ for (const v of viewpoints) {
   if (!["documented", "approximate"].includes(v.positionConfidence)) {
     fail(`[${id}] bad positionConfidence "${v.positionConfidence}"`);
   }
+  if (v.localImage) {
+    if (!v.localImage.startsWith("/photos/")) {
+      fail(`[${id}] localImage must live under /photos/ (got "${v.localImage}")`);
+    } else if (!existsSync(resolve(root, "public", v.localImage.slice(1)))) {
+      fail(`[${id}] localImage "${v.localImage}" declared but file missing in public/`);
+    }
+  }
+}
+// hosted photos must be credited
+const declaredImages = viewpoints.filter((v) => v.localImage);
+if (declaredImages.length > 0 && !existsSync(resolve(root, "public/photos/ATTRIBUTION.md"))) {
+  fail("public/photos/ATTRIBUTION.md missing while hosted photos are declared");
 }
 
 console.log(

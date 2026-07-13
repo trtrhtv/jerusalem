@@ -51,6 +51,25 @@ export function ViewpointPanel({
           </span>
         </div>
 
+        {/* The photograph itself, when we host a public-domain copy. */}
+        {v.localImage && (
+          <figure className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10">
+            <a href={v.itemUrl} target="_blank" rel="noopener noreferrer" title="לרשומת הפריט בארכיון">
+              {/* eslint-disable-next-line @next/next/no-img-element -- local static asset, full control */}
+              <img
+                src={v.localImage}
+                alt={v.title}
+                loading="lazy"
+                className="max-h-72 w-full bg-neutral-100 object-contain dark:bg-neutral-800"
+              />
+            </a>
+            <figcaption className="border-t border-black/10 bg-neutral-50 px-2 py-1 text-[10px] text-neutral-500 dark:border-white/10 dark:bg-neutral-900">
+              {v.title} · Library of Congress
+              {v.reproductionNumber ? ` · ${v.reproductionNumber}` : ""} · נחלת הכלל
+            </figcaption>
+          </figure>
+        )}
+
         {v.notesHe && <p className="leading-relaxed">{v.notesHe}</p>}
         {v.notes && <p className="text-xs leading-relaxed text-neutral-500">{v.notes}</p>}
 
@@ -61,10 +80,10 @@ export function ViewpointPanel({
           className="block rounded-xl border border-sky-600/40 bg-sky-50 p-3 text-center transition hover:bg-sky-100 dark:bg-sky-950/40 dark:hover:bg-sky-950/70"
         >
           <span className="block text-sm font-semibold text-sky-800 dark:text-sky-200">
-            צפייה בתצלום המקורי בקטלוג המוסד ↗
+            {v.localImage ? "לרשומת הפריט המלאה בקטלוג המוסד ↗" : "צפייה בתצלום המקורי בקטלוג המוסד ↗"}
           </span>
           <span className="mt-0.5 block text-[11px] text-sky-700/80 dark:text-sky-300/80">
-            View the original at the holding institution
+            View the original record at the holding institution
           </span>
         </a>
 
@@ -91,7 +110,9 @@ export function ViewpointPanel({
         )}
 
         <p className="border-t border-black/10 pt-3 text-[10px] leading-snug text-neutral-400 dark:border-white/10">
-          התמונה אינה מאוחסנת אצלנו — הקישור מוביל לרשומת הפריט המאומתת בארכיון.
+          {v.localImage
+            ? "עותק נחלת-הכלל מאוחסן אצלנו; הקרדיט המלא ב-public/photos/ATTRIBUTION.md."
+            : "התמונה אינה מאוחסנת אצלנו — הקישור מוביל לרשומת הפריט המאומתת בארכיון."}{" "}
           מיקום המצלמה על המפה {v.positionConfidence === "approximate" ? "מוערך ואינו מדויק" : "ידוע במדויק"}.
         </p>
       </div>
