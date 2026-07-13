@@ -1,5 +1,5 @@
 {
-  "$comment": "Camera viewpoints: real, individually verified historical images of the pilot corridor. Every itemUrl was confirmed against the holding institution's catalog (July 2026); titles and reproduction numbers are quoted verbatim from the catalog. Camera coordinates are estimated from the image content and are marked positionConfidence=approximate — do not present them as surveyed. Images are NOT re-hosted here; the panel links to the institution's item page.",
+  "$comment": "Camera viewpoints: real, individually verified historical images of the pilot corridor. Every itemUrl was confirmed against the holding institution's catalog (July 2026); titles and reproduction numbers are quoted verbatim from the catalog. Camera coordinates are estimated from the image content and are marked positionConfidence=approximate — do not present them as surveyed. Public-domain copies are hosted under public/photos/ (localImage), each verified visually against its record and credited in public/photos/ATTRIBUTION.md; the panel also links to the institution's item page.",
   "viewpoints": [
     {
       "id": "roberts-jerusalem-south-1839",
@@ -7,12 +7,16 @@
       "titleHe": "ירושלים מדרום, 12 באפריל 1839",
       "year": 1839,
       "yearDisplay": "1839",
-      "coordinates": [35.229, 31.7645],
+      "coordinates": [
+        35.229,
+        31.7645
+      ],
       "positionConfidence": "approximate",
       "sourceId": "roberts-holy-land-1842",
       "itemUrl": "https://www.loc.gov/item/2002717458/",
       "notes": "David Roberts' on-the-spot drawing (lithographed by Louis Haghe, published 1842–49) — among the earliest visual documentation of the city in our timeline. The lithograph shows the city on a distant ridge beyond a deep bend of the Hinnom Valley, placing the artist well to the south on the Abu Tor ridge (position refined from image content).",
-      "notesHe": "רישום מהמקום של דיוויד רוברטס (ליתוגרפיה מאת לואי הגה, פורסם 1842–49) — מהתיעוד הוויזואלי המוקדם ביותר של העיר בציר הזמן שלנו. בליתוגרפיה העיר נראית על רכס מרוחק מעבר לפיתול עמוק של גיא בן הינום — כלומר הצייר עמד דרומה, על רכס אבו-תור (המיקום חודד מתוכן התמונה)."
+      "notesHe": "רישום מהמקום של דיוויד רוברטס (ליתוגרפיה מאת לואי הגה, פורסם 1842–49) — מהתיעוד הוויזואלי המוקדם ביותר של העיר בציר הזמן שלנו. בליתוגרפיה העיר נראית על רכס מרוחק מעבר לפיתול עמוק של גיא בן הינום — כלומר הצייר עמד דרומה, על רכס אבו-תור (המיקום חודד מתוכן התמונה).",
+      "localImage": "/photos/roberts-jerusalem-south-1839.jpg"
     },
     {
       "id": "kaiser-entry-citadel-1898",
@@ -20,13 +24,17 @@
       "titleHe": "ביקור וילהלם השני, 1898: הקיסר רוכב; המצודה והחומה המערבית ברקע",
       "year": 1898,
       "yearDisplay": "1898",
-      "coordinates": [35.2242, 31.7742],
+      "coordinates": [
+        35.2242,
+        31.7742
+      ],
       "positionConfidence": "approximate",
       "sourceId": "american-colony-archive",
       "itemUrl": "https://www.loc.gov/resource/matpc.04612/",
       "reproductionNumber": "LC-DIG-matpc-04612",
       "notes": "American Colony photograph of the October 1898 imperial entry — the very event for which the wall was breached and the moat ramp built beside Jaffa Gate. The image shows the party riding in the Hinnom Valley below the Citadel and west wall, so the camera stood on the valley's western slope near the Sultan's Pool (position refined from image content).",
-      "notesHe": "תצלום המושבה האמריקאית מהכניסה הקיסרית של אוקטובר 1898 — האירוע שלמענו נפרצה החומה ונבנה הכבש ליד שער יפו. בתמונה הפמליה רוכבת בגיא בן הינום מתחת למצודה ולחומה המערבית, ולכן הצלם עמד במדרון המערבי של הגיא ליד בריכת הסולטן (המיקום חודד מתוכן התמונה)."
+      "notesHe": "תצלום המושבה האמריקאית מהכניסה הקיסרית של אוקטובר 1898 — האירוע שלמענו נפרצה החומה ונבנה הכבש ליד שער יפו. בתמונה הפמליה רוכבת בגיא בן הינום מתחת למצודה ולחומה המערבית, ולכן הצלם עמד במדרון המערבי של הגיא ליד בריכת הסולטן (המיקום חודד מתוכן התמונה).",
+      "localImage": "/photos/kaiser-entry-citadel-1898.jpg"
     },
     {
       "id": "jaffa-road-procession-1898",
@@ -34,12 +42,17 @@
       "titleHe": "ביקור וילהלם השני, 1898: מבט כללי על רחוב יפו, הומה אנשים ודגלים, בזמן התהלוכה",
       "year": 1898,
       "yearDisplay": "1898",
-      "coordinates": [35.2242, 31.7776],
+      "coordinates": [
+        35.2242,
+        31.7776
+      ],
       "positionConfidence": "approximate",
       "sourceId": "american-colony-archive",
       "itemUrl": "https://www.loc.gov/pictures/item/2019694904/",
       "notes": "American Colony photograph looking along Jaffa Road during the 1898 procession — documents the road as the city's ceremonial western artery, with the late-Ottoman streetscape around it.",
-      "notesHe": "תצלום המושבה האמריקאית לאורך רחוב יפו בזמן תהלוכת 1898 — מתעד את הרחוב כעורק המערבי הטקסי של העיר, על הרחוב העות'מאני המאוחר שסביבו."
+      "notesHe": "תצלום המושבה האמריקאית לאורך רחוב יפו בזמן תהלוכת 1898 — מתעד את הרחוב כעורק המערבי הטקסי של העיר, על הרחוב העות'מאני המאוחר שסביבו.",
+      "localImage": "/photos/jaffa-road-procession-1898.jpg",
+      "reproductionNumber": "LC-DIG-matpc-04611"
     },
     {
       "id": "jaffa-gate-matson",
@@ -47,13 +60,17 @@
       "titleHe": "שער יפו (אוסף מטסון)",
       "year": 1908,
       "yearDisplay": "1908–1914",
-      "coordinates": [35.2271, 31.7771],
+      "coordinates": [
+        35.2271,
+        31.7771
+      ],
       "positionConfidence": "approximate",
       "sourceId": "american-colony-archive",
       "itemUrl": "https://www.loc.gov/item/2019701851/",
       "reproductionNumber": "LC-DIG-matpc-11351",
       "notes": "Classic Matson-collection view of the gate from the northwest. The catalog dates it between 1898 and 1914, but the Ottoman clock tower (erected 1908) is clearly visible in the image, refining the date to 1908–1914 — the image content itself narrows the catalog range.",
-      "notesHe": "מבט מטסון קלאסי על השער מצפון-מערב. הקטלוג מתארך בין 1898 ל-1914, אך מגדל השעון העות'מאני (נבנה 1908) נראה בבירור בתמונה — ולכן התיארוך מצטמצם ל-1908–1914. תוכן התמונה עצמו חידד את טווח הקטלוג."
+      "notesHe": "מבט מטסון קלאסי על השער מצפון-מערב. הקטלוג מתארך בין 1898 ל-1914, אך מגדל השעון העות'מאני (נבנה 1908) נראה בבירור בתמונה — ולכן התיארוך מצטמצם ל-1908–1914. תוכן התמונה עצמו חידד את טווח הקטלוג.",
+      "localImage": "/photos/jaffa-gate-matson.jpg"
     },
     {
       "id": "from-clock-tower-east",
@@ -61,13 +78,17 @@
       "titleHe": "ממגדל השעון של שער יפו מזרחה, על פני מרכז ירושלים",
       "year": 1908,
       "yearDisplay": "1908–1922",
-      "coordinates": [35.2278, 31.7768],
+      "coordinates": [
+        35.2278,
+        31.7768
+      ],
       "positionConfidence": "documented",
       "sourceId": "american-colony-archive",
       "itemUrl": "https://www.loc.gov/pictures/resource/ppmsca.04989/",
       "reproductionNumber": "LC-DIG-ppmsca-04989",
       "notes": "Stereograph panorama taken from the top of the Ottoman clock tower itself — the camera position is exact (the tower), and the photo can only date from the tower's lifetime, 1908–1922. Doubles as documentation that the tower stood.",
-      "notesHe": "סטריאוגרף (זוג תמונות) שצולם מראש מגדל השעון העות'מאני עצמו — מיקום המצלמה מדויק (המגדל), והתצלום יכול להיות רק מתקופת קיום המגדל, 1908–1922. משמש גם כתיעוד לקיומו — וזוגות סטריאו כאלה הם בדיוק המקור לחילוץ גבהים עתידי."
+      "notesHe": "סטריאוגרף (זוג תמונות) שצולם מראש מגדל השעון העות'מאני עצמו — מיקום המצלמה מדויק (המגדל), והתצלום יכול להיות רק מתקופת קיום המגדל, 1908–1922. משמש גם כתיעוד לקיומו — וזוגות סטריאו כאלה הם בדיוק המקור לחילוץ גבהים עתידי.",
+      "localImage": "/photos/from-clock-tower-east.jpg"
     }
   ]
 }
