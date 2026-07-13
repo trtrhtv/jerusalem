@@ -8,6 +8,7 @@ import type {
   TaskPriority,
 } from "@/lib/focus/types";
 import { loadData, makeId, saveData } from "@/lib/focus/storage";
+import { InstallButton } from "./InstallButton";
 import { TaskPanel } from "./TaskPanel";
 import { JournalPanel } from "./JournalPanel";
 import { SessionOverlay } from "./SessionOverlay";
@@ -23,6 +24,14 @@ export function FocusApp() {
   useEffect(() => {
     saveData(data);
   }, [data]);
+
+  // Service Worker להתקנה כאפליקציה ולהתראות — scope של /focus בלבד,
+  // כדי לא לגעת בשאר האתר
+  useEffect(() => {
+    navigator.serviceWorker
+      ?.register("/focus-sw.js", { scope: "/focus" })
+      .catch(() => {});
+  }, []);
 
   const onEscape = useCallback((record: EscapeRecord) => {
     setData((prev) => ({ ...prev, escapes: [...prev.escapes, record] }));
@@ -96,6 +105,7 @@ export function FocusApp() {
             מנהל משימות שלא נותן לך לברוח
           </span>
         </div>
+        {!session && <InstallButton />}
         {!session && (
           <nav className="flex gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
             {(

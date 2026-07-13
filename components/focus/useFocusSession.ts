@@ -9,6 +9,7 @@ import type {
   SessionRecord,
 } from "@/lib/focus/types";
 import { loadLiveSession, makeId, saveLiveSession } from "@/lib/focus/storage";
+import { notify } from "@/lib/focus/notify";
 import {
   ABANDON_MS,
   GRACE_MS,
@@ -81,17 +82,35 @@ export function useFocusSession({ onEscape, onSessionEnd }: UseFocusSessionArgs)
 
   // זיהוי יציאה וחזרה: טאב מוסתר או חלון שאיבד פוקוס
   useEffect(() => {
+    let leaveNagTimer: ReturnType<typeof setTimeout> | null = null;
+    const cancelLeaveNag = () => {
+      if (leaveNagTimer !== null) clearTimeout(leaveNagTimer);
+      leaveNagTimer = null;
+    };
     const check = () => {
       const s = sessionRef.current;
       const away = document.hidden || !document.hasFocus();
       if (!s || s.onBreak || s.pendingEscape) {
         awayStartRef.current = null;
+        cancelLeaveNag();
         return;
       }
       if (away) {
-        if (awayStartRef.current === null) awayStartRef.current = Date.now();
+        if (awayStartRef.current === null) {
+          awayStartRef.current = Date.now();
+          // הצקה ראשונה מיד אחרי תקופת החסד — מתוזמנת עכשיו, כי במובייל
+          // הדף עלול לקפוא ברקע והטיק השניתי לא יגיע
+          cancelLeaveNag();
+          leaveNagTimer = setTimeout(() => {
+            if (awayStartRef.current !== null && sessionRef.current && !sessionRef.current.onBreak) {
+              lastNotifyAtRef.current = Date.now();
+              void notify("מוקד — יצאת באמצע פוקוס", `״${s.taskTitle}״ מחכה. חוזרים?`);
+            }
+          }, GRACE_MS + 2000);
+        }
         return;
       }
+      cancelLeaveNag();
       // חזרה
       if (awayStartRef.current === null) return;
       const leftAt = awayStartRef.current;
@@ -110,6 +129,7 @@ export function useFocusSession({ onEscape, onSessionEnd }: UseFocusSessionArgs)
     window.addEventListener("blur", check);
     window.addEventListener("focus", check);
     return () => {
+      cancelLeaveNag();
       document.removeEventListener("visibilitychange", check);
       window.removeEventListener("blur", check);
       window.removeEventListener("focus", check);
@@ -140,26 +160,42 @@ export function useFocusSession({ onEscape, onSessionEnd }: UseFocusSessionArgs)
         // הצקה בכותרת הטאב — נראית גם כשגולשים בטאב אחר
         document.title = `${NAG_TITLES[Math.floor(now / 2000) % NAG_TITLES.length]} · ${formatDuration(awayMs)}`;
         // התראת דפדפן מציקה, חוזרת כל דקה
-        if (
-          awayMs > NOTIFY_AFTER_MS &&
-          now - lastNotifyAtRef.current > NOTIFY_REPEAT_MS &&
-          typeof Notification !== "undefined" &&
-          Notification.permission === "granted"
-        ) {
+        if (awayMs > NOTIFY_AFTER_MS && now - lastNotifyAtRef.current > NOTIFY_REPEAT_MS) {
           lastNotifyAtRef.current = now;
-          try {
-            new Notification("מוקד — חזור לעבודה", {
-              body: nagNotificationText(awayMs, s.taskTitle),
-              tag: "moked-nag",
-            });
-          } catch {
-            // דפדפן שלא תומך בבנאי Notification (מובייל) — מוותרים בשקט
-          }
+          void notify("מוקד — חזור לעבודה", nagNotificationText(awayMs, s.taskTitle));
         }
       }
     }, 1000);
     return () => clearInterval(id);
   }, [active, commit]);
+
+  // מסך דולק בזמן פוקוס (חשוב במובייל); המנעול משתחרר אוטומטית ביציאה
+  // מהאפליקציה ונרכש מחדש בחזרה
+  const wantWakeLock = active && !session?.onBreak;
+  useEffect(() => {
+    if (!wantWakeLock || !("wakeLock" in navigator)) return;
+    let sentinel: WakeLockSentinel | null = null;
+    let disposed = false;
+    const acquire = () => {
+      navigator.wakeLock
+        .request("screen")
+        .then((s) => {
+          if (disposed) void s.release();
+          else sentinel = s;
+        })
+        .catch(() => {});
+    };
+    const onVisible = () => {
+      if (document.visibilityState === "visible") acquire();
+    };
+    acquire();
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      disposed = true;
+      document.removeEventListener("visibilitychange", onVisible);
+      sentinel?.release().catch(() => {});
+    };
+  }, [wantWakeLock]);
 
   const start = useCallback(
     (task: FocusTask) => {
