@@ -100,7 +100,35 @@ if (declaredImages.length > 0 && !existsSync(resolve(root, "public/photos/ATTRIB
   fail("public/photos/ATTRIBUTION.md missing while hosted photos are declared");
 }
 
+// --- walking scene (3D massing pilot) ---
+const walk = read("data/walk/jaffa-gate-scene.json");
+console.log(`\ndata/walk/jaffa-gate-scene.json — ${walk.elements.length} elements`);
+for (const el of walk.elements) {
+  const id = el.id ?? "(no id)";
+  for (const field of ["id", "name", "nameHe", "kind", "footprint", "height", "evidenceTier", "sources"]) {
+    if (el[field] == null) fail(`[${id}] walk element missing "${field}"`);
+  }
+  if (!["documented", "typological", "conjecture"].includes(el.evidenceTier)) {
+    fail(`[${id}] bad evidenceTier "${el.evidenceTier}"`);
+  }
+  if (
+    (el.evidenceTier === "documented" || el.evidenceTier === "typological") &&
+    (el.sources ?? []).length === 0
+  ) {
+    fail(`[${id}] evidenceTier="${el.evidenceTier}" but no sources cited`);
+  }
+  for (const sid of el.sources ?? []) {
+    if (!sourceIds.has(sid)) fail(`[${id}] unknown source "${sid}"`);
+  }
+  if (!Array.isArray(el.footprint) || el.footprint.length < 3) {
+    fail(`[${id}] footprint needs >= 3 points`);
+  }
+  if (el.demolishedYear != null && el.builtYear != null && el.demolishedYear < el.builtYear) {
+    fail(`[${id}] demolishedYear < builtYear`);
+  }
+}
+
 console.log(
-  `\n${errors === 0 ? "✓" : "✗"} checked ${featureCount} features + ${viewpoints.length} viewpoints — ${errors} error(s)`,
+  `\n${errors === 0 ? "✓" : "✗"} checked ${featureCount} features + ${viewpoints.length} viewpoints + ${walk.elements.length} walk elements — ${errors} error(s)`,
 );
 process.exit(errors === 0 ? 0 : 1);

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { MapClient } from "@/components/MapClient";
 
 export default function Home() {
@@ -10,6 +11,12 @@ export default function Home() {
             <span className="text-xs text-neutral-500">
               מבט-על · ציר שער יפו–רחוב יפו (פיילוט)
             </span>
+            <Link
+              href="/walk"
+              className="rounded-full bg-neutral-800 px-3 py-0.5 text-xs font-semibold text-white transition hover:bg-neutral-600 dark:bg-neutral-200 dark:text-neutral-900 dark:hover:bg-neutral-400"
+            >
+              🚶 מצב הליכה
+            </Link>
           </div>
           <p className="text-xs text-neutral-500">
             הדמיה מעוגנת-מקורות — אין נתונים מומצאים. כל אלמנט נושא מדרג ראיות ומקורות.
