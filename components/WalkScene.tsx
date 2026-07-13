@@ -104,12 +104,21 @@ function buildElementMesh(el: WalkElement): THREE.Object3D {
   return group;
 }
 
+/** Initial year from ?year= (component is ssr:false, window is available). */
+function initialWalkYear(): number {
+  if (typeof window === "undefined") return walkScene.defaultYear;
+  const y = Number(new URLSearchParams(window.location.search).get("year"));
+  return Number.isFinite(y) && y >= 1500 && y <= 1930
+    ? Math.round(y)
+    : walkScene.defaultYear;
+}
+
 export function WalkScene() {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const startedRef = useRef(false);
   const meshIndexRef = useRef<Map<string, THREE.Object3D>>(new Map());
   const yearRef = useRef(walkScene.defaultYear);
-  const [year, setYear] = useState(walkScene.defaultYear);
+  const [year, setYear] = useState(initialWalkYear);
   const [locked, setLocked] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const controlsRef = useRef<PointerLockControls | null>(null);
@@ -126,6 +135,13 @@ export function WalkScene() {
       const obj = meshIndexRef.current.get(el.id);
       if (obj) obj.visible = elementExistsAt(el, year);
     }
+  }, [year]);
+
+  // keep the shareable ?year= param in sync
+  useEffect(() => {
+    const u = new URL(window.location.href);
+    u.searchParams.set("year", String(year));
+    window.history.replaceState(null, "", u);
   }, [year]);
 
   useEffect(() => {
@@ -261,6 +277,11 @@ export function WalkScene() {
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center p-3">
         <div className="pointer-events-auto flex items-center gap-2 rounded-xl border border-black/10 bg-white/90 p-2 shadow-lg backdrop-blur dark:border-white/10 dark:bg-neutral-900/90">
           <span className="px-1 text-xs text-neutral-500">שנה:</span>
+          {!walkScene.yearPresets.includes(year) && (
+            <span className="rounded-lg bg-neutral-800 px-3 py-1 text-sm font-semibold tabular-nums text-white dark:bg-neutral-200 dark:text-neutral-900">
+              {year}
+            </span>
+          )}
           {walkScene.yearPresets.map((y) => (
             <button
               key={y}
@@ -277,6 +298,13 @@ export function WalkScene() {
           <span className="hidden px-1 text-[10px] text-neutral-400 sm:block">
             1870: לפני הפרצה · 1900: אחרי הפרצה · 1915: עם מגדל השעון
           </span>
+          <a
+            href={`/?year=${year}`}
+            className="rounded-lg bg-black/5 px-2.5 py-1 text-xs hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20"
+            title="חזרה למפת ציר-הזמן באותה שנה"
+          >
+            🗺️ למפה
+          </a>
         </div>
       </div>
 

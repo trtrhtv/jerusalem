@@ -140,11 +140,23 @@ function isVisibleAt(f: TimeFeature, year: number) {
   return appear <= year && disappear > year;
 }
 
+/**
+ * Initial year from the shareable ?year= URL param. Safe to read window here:
+ * this component is loaded with ssr:false, so the first render is client-side.
+ */
+function initialYear(): number {
+  if (typeof window === "undefined") return TIMELINE.default;
+  const y = Number(new URLSearchParams(window.location.search).get("year"));
+  return Number.isFinite(y) && y >= TIMELINE.min && y <= TIMELINE.max
+    ? Math.round(y)
+    : TIMELINE.default;
+}
+
 export function TimelineMap() {
   const mapRef = useRef<maplibregl.Map | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [ready, setReady] = useState(false);
-  const [year, setYear] = useState<number>(TIMELINE.default);
+  const [year, setYear] = useState<number>(initialYear);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedVpId, setSelectedVpId] = useState<string | null>(null);
 
@@ -316,6 +328,16 @@ export function TimelineMap() {
     };
   }, []);
 
+  // keep the shareable ?year= param in sync (debounced — the slider fires fast)
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const u = new URL(window.location.href);
+      u.searchParams.set("year", String(year));
+      window.history.replaceState(null, "", u);
+    }, 250);
+    return () => clearTimeout(t);
+  }, [year]);
+
   // --- apply time filter when year changes ---
   useEffect(() => {
     const map = mapRef.current;
@@ -359,6 +381,13 @@ export function TimelineMap() {
               {visibleFeatures.length} אלמנטים גלויים
               {visibleVpCount > 0 && ` · 📷 ${visibleVpCount}`}
             </span>
+            <a
+              href={`/walk?year=${year}`}
+              className="rounded-full bg-neutral-800 px-2.5 py-0.5 text-xs font-semibold text-white transition hover:bg-neutral-600 dark:bg-neutral-200 dark:text-neutral-900 dark:hover:bg-neutral-400"
+              title="כניסה למצב הליכה בשער יפו, בשנה הנבחרת"
+            >
+              🚶 הליכה ב-{year}
+            </a>
           </div>
           {/* LTR so the timeline reads chronologically: drag right = later. */}
           <div dir="ltr">
