@@ -189,6 +189,18 @@ function initialWalkYear(): number {
     : walkScene.defaultYear;
 }
 
+type ViewMode = "walk" | "aerial";
+
+function initialMode(): ViewMode {
+  if (typeof window === "undefined") return "walk";
+  return new URLSearchParams(window.location.search).get("mode") === "aerial"
+    ? "aerial"
+    : "walk";
+}
+
+/** Fast lookup for pick/glide decisions. */
+const elementById = new Map(allElements.map((e) => [e.id, e]));
+
 export function WalkScene() {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const minimapRef = useRef<HTMLDivElement | null>(null);
@@ -199,6 +211,10 @@ export function WalkScene() {
   const [playing, setPlaying] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [evidenceMode, setEvidenceMode] = useState(false);
+  const [mode, setMode] = useState<ViewMode>(initialMode);
+  const modeRef = useRef<ViewMode>(mode);
+  /** Set inside the mount effect; lets the mode effect drive the camera. */
+  const applyModeRef = useRef<((m: ViewMode) => void) | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   /** Running construction/demolition animations, consumed by the render loop. */
   const transitionsRef = useRef<
@@ -256,12 +272,20 @@ export function WalkScene() {
     return () => clearInterval(id);
   }, [playing]);
 
-  // keep the shareable ?year= param in sync
+  // keep the shareable ?year= / ?mode= params in sync
   useEffect(() => {
     const u = new URL(window.location.href);
     u.searchParams.set("year", String(year));
+    if (mode === "aerial") u.searchParams.set("mode", "aerial");
+    else u.searchParams.delete("mode");
     window.history.replaceState(null, "", u);
-  }, [year]);
+  }, [year, mode]);
+
+  // walk ⟷ synthetic-aerial toggle
+  useEffect(() => {
+    modeRef.current = mode;
+    applyModeRef.current?.(mode);
+  }, [mode]);
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -390,13 +414,68 @@ export function WalkScene() {
 
     const raycaster = new THREE.Raycaster();
     const pickables = [...meshIndex.values()];
+    let glideTarget: THREE.Vector3 | null = null;
     const pick = (ndc: THREE.Vector2) => {
       raycaster.setFromCamera(ndc, camera);
       const hits = raycaster
         .intersectObjects(pickables, true)
         .filter((h) => h.object.visible && h.object.userData.elementId);
-      const id = hits[0]?.object.userData.elementId as string | undefined;
-      setSelectedId(id && id !== "walk-ground" ? id : null);
+      const hit = hits[0];
+      if (!hit) {
+        setSelectedId(null);
+        return;
+      }
+      const id = hit.object.userData.elementId as string;
+      const kind = elementById.get(id)?.kind;
+      // Street-View-style navigation: clicking the ground/street glides there
+      if (
+        modeRef.current === "walk" &&
+        (kind === "ground" || kind === "road" || kind === "moat")
+      ) {
+        glideTarget = new THREE.Vector3(
+          THREE.MathUtils.clamp(hit.point.x, BOUND_X[0], BOUND_X[1]),
+          EYE_HEIGHT,
+          THREE.MathUtils.clamp(hit.point.z, BOUND_Z[0], BOUND_Z[1]),
+        );
+        setSelectedId(null);
+        return;
+      }
+      setSelectedId(id !== "walk-ground" ? id : null);
+    };
+
+    // --- synthetic aerial mode: the same evidence-bearing scene from above ---
+    const aerial = { tx: 90, tz: -10, h: 230 };
+    const savedPose = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), saved: false };
+    const applyAerialCam = () => {
+      camera.position.set(aerial.tx, aerial.h, aerial.tz + aerial.h * 0.42);
+      camera.lookAt(aerial.tx, 0, aerial.tz);
+    };
+    applyModeRef.current = (m) => {
+      if (!scene.fog) return;
+      const fog = scene.fog as THREE.Fog;
+      if (m === "aerial") {
+        savedPose.pos.copy(camera.position);
+        savedPose.quat.copy(camera.quaternion);
+        savedPose.saved = true;
+        aerial.tx = THREE.MathUtils.clamp(camera.position.x, -60, 300);
+        aerial.tz = THREE.MathUtils.clamp(camera.position.z, -130, 130);
+        aerial.h = 230;
+        camera.far = 1200;
+        fog.near = 500;
+        fog.far = 1100;
+        applyAerialCam();
+      } else {
+        camera.far = 600;
+        fog.near = 130;
+        fog.far = 430;
+        if (savedPose.saved) {
+          camera.position.copy(savedPose.pos);
+          camera.quaternion.copy(savedPose.quat);
+        }
+        look.setFromQuaternion(camera.quaternion, "YXZ");
+        look.z = 0;
+      }
+      camera.updateProjectionMatrix();
     };
 
     // --- drag-to-look: no pointer lock, so the mouse stays free for the UI.
@@ -421,10 +500,24 @@ export function WalkScene() {
       lastX = e.clientX;
       lastY = e.clientY;
       dragDist += Math.abs(dx) + Math.abs(dy);
+      if (modeRef.current === "aerial") {
+        // drag pans the aerial view, map-style
+        const s = aerial.h * 0.0011;
+        aerial.tx = THREE.MathUtils.clamp(aerial.tx - dx * s, -120, 340);
+        aerial.tz = THREE.MathUtils.clamp(aerial.tz - dy * s, -160, 160);
+        applyAerialCam();
+        return;
+      }
       look.y -= dx * 0.0042;
       look.x = THREE.MathUtils.clamp(look.x - dy * 0.0042, -1.45, 1.45);
       look.z = 0;
       camera.quaternion.setFromEuler(look);
+    };
+    const onWheel = (e: WheelEvent) => {
+      if (modeRef.current !== "aerial") return;
+      e.preventDefault();
+      aerial.h = THREE.MathUtils.clamp(aerial.h * (1 + e.deltaY * 0.0012), 60, 420);
+      applyAerialCam();
     };
     const onPointerUp = (e: PointerEvent) => {
       if (!dragging) return;
@@ -443,6 +536,10 @@ export function WalkScene() {
     renderer.domElement.addEventListener("pointerdown", onPointerDown);
     renderer.domElement.addEventListener("pointermove", onPointerMove);
     renderer.domElement.addEventListener("pointerup", onPointerUp);
+    renderer.domElement.addEventListener("wheel", onWheel, { passive: false });
+
+    // if the page opened directly in aerial mode, apply it now
+    if (modeRef.current === "aerial") applyModeRef.current("aerial");
 
     const onResize = () => {
       camera.aspect = mount.clientWidth / mount.clientHeight;
@@ -462,7 +559,15 @@ export function WalkScene() {
         Number(keys.has("KeyS") || keys.has("ArrowDown"));
       const right = Number(keys.has("KeyD") || keys.has("ArrowRight")) -
         Number(keys.has("KeyA") || keys.has("ArrowLeft"));
-      if (fwd || right) {
+      if (modeRef.current === "aerial") {
+        if (fwd || right) {
+          const s = aerial.h * 0.9 * dt;
+          aerial.tx = THREE.MathUtils.clamp(aerial.tx + right * s, -120, 340);
+          aerial.tz = THREE.MathUtils.clamp(aerial.tz - fwd * s, -160, 160);
+          applyAerialCam();
+        }
+      } else if (fwd || right) {
+        glideTarget = null; // manual movement cancels a glide
         const boost = keys.has("ShiftLeft") || keys.has("ShiftRight") ? 2 : 1;
         camera.getWorldDirection(moveDir);
         moveDir.y = 0;
@@ -474,6 +579,18 @@ export function WalkScene() {
         camera.position.y = EYE_HEIGHT;
         camera.position.x = THREE.MathUtils.clamp(camera.position.x, BOUND_X[0], BOUND_X[1]);
         camera.position.z = THREE.MathUtils.clamp(camera.position.z, BOUND_Z[0], BOUND_Z[1]);
+      } else if (glideTarget) {
+        // Street-View-style glide toward the clicked point
+        moveDir.copy(glideTarget).sub(camera.position);
+        moveDir.y = 0;
+        const dist = moveDir.length();
+        if (dist < 0.4) {
+          glideTarget = null;
+        } else {
+          const step = Math.min(dist, 14 * dt);
+          camera.position.addScaledVector(moveDir.normalize(), step);
+          camera.position.y = EYE_HEIGHT;
+        }
       }
       // construction/demolition: rise from the ground / sink away
       if (transitionsRef.current.size) {
@@ -493,12 +610,18 @@ export function WalkScene() {
       miniAccum += dt;
       if (minimap && miniMarker && miniAccum > 0.2) {
         miniAccum = 0;
-        const lngLat = localToLngLat(camera.position.x, camera.position.z);
+        const aerialMode = modeRef.current === "aerial";
+        const lngLat = aerialMode
+          ? localToLngLat(aerial.tx, aerial.tz)
+          : localToLngLat(camera.position.x, camera.position.z);
         miniMarker.setLngLat(lngLat);
         camera.getWorldDirection(camDir);
-        // north = -z, east = +x → compass bearing
-        miniMarker.setRotation((Math.atan2(camDir.x, -camDir.z) * 180) / Math.PI);
+        // north = -z, east = +x → compass bearing (aerial always faces north)
+        miniMarker.setRotation(
+          aerialMode ? 0 : (Math.atan2(camDir.x, -camDir.z) * 180) / Math.PI,
+        );
         minimap.setCenter(lngLat);
+        if (aerialMode) minimap.setZoom(Math.max(13.8, 17.2 - aerial.h / 90));
       }
       renderer.render(scene, camera);
     };
@@ -513,6 +636,8 @@ export function WalkScene() {
       renderer.domElement.removeEventListener("pointerdown", onPointerDown);
       renderer.domElement.removeEventListener("pointermove", onPointerMove);
       renderer.domElement.removeEventListener("pointerup", onPointerUp);
+      renderer.domElement.removeEventListener("wheel", onWheel);
+      applyModeRef.current = null;
       renderer.dispose();
       mount.removeChild(renderer.domElement);
       scene.traverse((o) => {
@@ -577,6 +702,17 @@ export function WalkScene() {
               {y}
             </button>
           ))}
+          <button
+            onClick={() => setMode((m) => (m === "walk" ? "aerial" : "walk"))}
+            className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
+              mode === "aerial"
+                ? "bg-sky-700 text-white hover:bg-sky-600"
+                : "bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20"
+            }`}
+            title="מעבר בין הליכה ברחוב למבט תצ״א סינתטי על אותה סצנה"
+          >
+            {mode === "walk" ? "🛩️ תצ״א" : "🚶 חזרה לרחוב"}
+          </button>
           <a
             href={`/?year=${year}`}
             className="rounded-lg bg-black/5 px-2.5 py-1 text-xs hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20"
@@ -590,7 +726,9 @@ export function WalkScene() {
       {/* controls hint — the mouse is free: drag to look, click to inspect */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center p-3">
         <div className="rounded-full border border-black/10 bg-white/80 px-4 py-1.5 text-[11px] text-neutral-600 shadow backdrop-blur dark:border-white/10 dark:bg-neutral-900/80 dark:text-neutral-300">
-          גררו עם העכבר להבטה · WASD/חצים להליכה · Shift ריצה · קליק על מבנה = מקורות · E מצב ראיות · 1/2/3 שנים
+          {mode === "walk"
+            ? "גררו להבטה · קליק על הרחוב = תנועה לשם · WASD/חצים להליכה · Shift ריצה · קליק על מבנה = מקורות · E מצב ראיות · 1/2/3 שנים"
+            : "תצ״א סינתטית מההדמיה — גררו להזזה · גלגלת לזום · ▶ מנגן את בניית העיר · קליק על מבנה = מקורות · E מצב ראיות"}
         </div>
       </div>
 

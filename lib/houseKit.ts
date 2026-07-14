@@ -271,6 +271,54 @@ function addKitOpenings(
   }
 }
 
+/**
+ * Market awnings (סוככי שוק) along a shop row's street facades — cloth
+ * sheets on poles, the bazaar-street texture seen in period photographs.
+ * Typological ambience, deterministic like everything else.
+ */
+const AWNING_COLORS = [0xb3a077, 0x9c8a70, 0xb8a68a, 0x8f7f68];
+function addAwnings(group: THREE.Group, fp: P2[], rand: () => number): void {
+  const edges = edgesWithNormals(fp).filter((e) => e.len > 8);
+  const poleMat = new THREE.MeshLambertMaterial({ color: 0x6e5a3f });
+  const poleGeo = new THREE.CylinderGeometry(0.045, 0.045, 2.5, 5);
+  for (const e of edges) {
+    const count = Math.floor(e.len / 4.2);
+    const dirX = (e.bx - e.ax) / e.len;
+    const dirZ = (e.bz - e.az) / e.len;
+    for (let i = 0; i < count; i++) {
+      if (rand() > 0.6) continue;
+      const t = (i + 0.5) / count;
+      const cx = e.ax + (e.bx - e.ax) * t + e.nx * 1.05;
+      const cz = e.az + (e.bz - e.az) * t + e.nz * 1.05;
+      const cloth = new THREE.Mesh(
+        new THREE.PlaneGeometry(3.4, 2.3),
+        new THREE.MeshLambertMaterial({
+          color: AWNING_COLORS[Math.floor(rand() * AWNING_COLORS.length)],
+          side: THREE.DoubleSide,
+        }),
+      );
+      cloth.rotation.order = "YXZ";
+      cloth.rotation.y = Math.atan2(e.nx, e.nz);
+      cloth.rotation.x = -Math.PI / 2 + 0.3; // slopes down away from the wall
+      cloth.position.set(cx, 2.9, cz);
+      cloth.castShadow = true;
+      cloth.userData.decor = true;
+      group.add(cloth);
+      // two poles at the outer corners
+      for (const s of [-1, 1]) {
+        const pole = new THREE.Mesh(poleGeo, poleMat);
+        pole.position.set(
+          cx + e.nx * 1.0 + dirX * s * 1.55,
+          1.25,
+          cz + e.nz * 1.0 + dirZ * s * 1.55,
+        );
+        pole.userData.decor = true;
+        group.add(pole);
+      }
+    }
+  }
+}
+
 // ---------- special cases ----------
 
 /** The Pool of Hezekiah: an open reservoir — stone rim, water surface. */
@@ -391,7 +439,7 @@ export function buildGeneratedElement(
     if (courtyard && pointInPolygon(x, z, courtyard)) continue;
     // keep domes clearly inboard so they never overhang the facade line
     const r = 1.1 + rand() * 0.6;
-    if (distToOutline(x, z, fp) < r + 2.2) continue;
+    if (distToOutline(x, z, fp) < r + 3.6) continue;
     const dome = makeDome(r, stone);
     dome.position.set(x, el.height, z);
     group.add(dome);
@@ -399,6 +447,9 @@ export function buildGeneratedElement(
 
   // arched openings on every outer facade (old-city blocks front lanes all around)
   addKitOpenings(group, fp, el.height, rand, frame);
+
+  // shop rows get market awnings along their street facades
+  if (el.buildingType === "commercial") addAwnings(group, fp, rand);
 
   // exterior stairs on one or two of the longer facades (residential fabric)
   if (el.buildingType === "mixed") {

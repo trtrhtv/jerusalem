@@ -123,6 +123,105 @@ export const TRACED = [
       "Wilson's block 64, south of Harat ad-Dawaye at the edge of the Armenian quarter.",
   },
   {
+    id: "wilson-blk-15",
+    name: "Block 15 strip east of Christian Street (Wilson 1865)",
+    nameHe: "רצועת גוש 15 ממזרח לרחוב הנוצרים (וילסון 1865)",
+    geometryType: "Polygon",
+    buildingType: "mixed",
+    px: [
+      [1633, 2790], [1656, 2790], [1652, 2845], [1649, 2871], [1632, 2871],
+      [1620, 2868], [1625, 2830],
+    ],
+    notesHe:
+      "הרצועה הבנויה בין רחוב הנוצרים לשטח המוריסתאן הפתוח. מתאר ברמת גוש.",
+    notes:
+      "The built strip between Christian Street and the open Muristan. Block-level outline.",
+  },
+  {
+    id: "wilson-blk-16",
+    name: "Block 16 west of Suk al-Lahhamin (Wilson 1865)",
+    nameHe: "גוש 16 ממערב לסוק אל-לחאמין (וילסון 1865)",
+    geometryType: "Polygon",
+    buildingType: "mixed",
+    px: [
+      [1802, 2762], [1843, 2760], [1843, 2810], [1802, 2812],
+    ],
+    notesHe: "קצה הגוש שוילסון מספרר 16, בין המוריסתאן לשווקים. מתאר ברמת גוש.",
+    notes:
+      "Edge of Wilson's block 16 between the Muristan and the bazaars. Block-level outline.",
+  },
+  {
+    id: "wilson-blk-66",
+    name: "Block 66 with its courtyard compound (Wilson 1865)",
+    nameHe: "גוש 66 על מתחם החצר שבו (וילסון 1865)",
+    geometryType: "Polygon",
+    buildingType: "mixed",
+    px: [
+      [1530, 3020], [1560, 3015], [1655, 3012], [1660, 3040], [1665, 3090],
+      [1545, 3098], [1530, 3075], [1520, 3050],
+    ],
+    notesHe:
+      "הגוש שוילסון מספרר 66, מדרום לסמטת דרב אל-יעקוביה, ובו מתחם חצר מצויר בנפרד. מתאר ברמת גוש.",
+    notes:
+      "Wilson's block 66 south of the Darau al-Yahubiye lane, containing an individually drawn courtyard compound. Block-level outline.",
+  },
+  {
+    id: "wilson-blk-63",
+    name: "Block 63 (Wilson 1865)",
+    nameHe: "גוש 63 (וילסון 1865)",
+    geometryType: "Polygon",
+    buildingType: "mixed",
+    px: [
+      [1700, 2995], [1755, 2988], [1800, 3000], [1795, 3040], [1740, 3060],
+      [1705, 3040],
+    ],
+    notesHe: "הגוש שוילסון מספרר 63, בגבול הרובע הארמני. מתאר ברמת גוש.",
+    notes: "Wilson's block 63 at the Armenian quarter edge. Block-level outline.",
+  },
+  {
+    id: "wilson-blk-62",
+    name: "Block 62 (Wilson 1865)",
+    nameHe: "גוש 62 (וילסון 1865)",
+    geometryType: "Polygon",
+    buildingType: "mixed",
+    px: [
+      [1758, 2985], [1842, 2988], [1835, 3035], [1790, 3045], [1755, 3010],
+    ],
+    notesHe:
+      "הגוש שוילסון מספרר 62, בין חארת א-דוואיה לחארת אל-ג'אוואני. מתאר ברמת גוש.",
+    notes:
+      "Wilson's block 62 between Harat ad-Dawaye and Harat al-Jawany. Block-level outline.",
+  },
+  {
+    id: "wilson-deir-as-surian",
+    name: "Deir as-Surian — the Syriac convent (Wilson block 4)",
+    nameHe: "דיר א-סוריאן — מנזר הסורים (גוש 4 אצל וילסון)",
+    geometryType: "Polygon",
+    buildingType: "religious-compound",
+    px: [
+      [1752, 3055], [1800, 3050], [1805, 3092], [1755, 3095],
+    ],
+    notesHe:
+      "המתחם שוילסון מסמן \"Deir as-Surian 4\" — מנזר הסורים-אורתודוקסים (מסורת מר מרקוס). מתאר מתחם.",
+    notes:
+      "The compound Wilson labels \"Deir as-Surian 4\" — the Syriac Orthodox convent (St Mark's tradition). Compound outline.",
+  },
+  {
+    id: "wilson-harat-al-maukaf",
+    name: "Harat al-Maukaf street along the citadel (Wilson 1865)",
+    nameHe: "רחוב חארת אל-מאוכף לאורך המצודה (וילסון 1865)",
+    geometryType: "LineString",
+    buildingType: "road",
+    px: [
+      [1528, 2944], [1522, 2960], [1517, 2985], [1508, 3010], [1500, 3040],
+      [1495, 3070],
+    ],
+    notesHe:
+      "הרחוב היורד דרומה מרחוב דוד לאורך חזית המצודה — קו האמצע כפי שמדד וילסון.",
+    notes:
+      "The street descending south from David Street along the citadel front — centerline as Wilson surveyed it.",
+  },
+  {
     id: "wilson-david-street",
     name: "David Street (Suwaikat Allun / Suk al-Bizar), Wilson 1865",
     nameHe: "רחוב דוד (סוויקת עלון / סוק אל-ביזאר), וילסון 1865",

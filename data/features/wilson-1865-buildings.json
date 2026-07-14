@@ -393,6 +393,363 @@
     {
       "type": "Feature",
       "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.229407,
+              31.777389
+            ],
+            [
+              35.229556,
+              31.777393
+            ],
+            [
+              35.229486,
+              31.777091
+            ],
+            [
+              35.229446,
+              31.776948
+            ],
+            [
+              35.229335,
+              31.776945
+            ],
+            [
+              35.22926,
+              31.77696
+            ],
+            [
+              35.229323,
+              31.777169
+            ],
+            [
+              35.229407,
+              31.777389
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-blk-15",
+        "name": "Block 15 strip east of Christian Street (Wilson 1865)",
+        "nameHe": "רצועת גוש 15 ממזרח לרחוב הנוצרים (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "mixed",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "הרצועה הבנויה בין רחוב הנוצרים לשטח המוריסתאן הפתוח. מתאר ברמת גוש.",
+        "notes": "The built strip between Christian Street and the open Muristan. Block-level outline."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.230528,
+              31.77757
+            ],
+            [
+              35.230796,
+              31.777587
+            ],
+            [
+              35.230756,
+              31.777314
+            ],
+            [
+              35.230487,
+              31.777296
+            ],
+            [
+              35.230528,
+              31.77757
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-blk-16",
+        "name": "Block 16 west of Suk al-Lahhamin (Wilson 1865)",
+        "nameHe": "גוש 16 ממערב לסוק אל-לחאמין (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "mixed",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "קצה הגוש שוילסון מספרר 16, בין המוריסתאן לשווקים. מתאר ברמת גוש.",
+        "notes": "Edge of Wilson's block 16 between the Muristan and the bazaars. Block-level outline."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.228552,
+              31.776113
+            ],
+            [
+              35.228751,
+              31.776145
+            ],
+            [
+              35.229371,
+              31.776177
+            ],
+            [
+              35.229381,
+              31.776025
+            ],
+            [
+              35.229373,
+              31.775752
+            ],
+            [
+              35.228587,
+              31.775689
+            ],
+            [
+              35.228508,
+              31.775812
+            ],
+            [
+              35.228463,
+              31.775947
+            ],
+            [
+              35.228552,
+              31.776113
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-blk-66",
+        "name": "Block 66 with its courtyard compound (Wilson 1865)",
+        "nameHe": "גוש 66 על מתחם החצר שבו (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "mixed",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "הגוש שוילסון מספרר 66, מדרום לסמטת דרב אל-יעקוביה, ובו מתחם חצר מצויר בנפרד. מתאר ברמת גוש.",
+        "notes": "Wilson's block 66 south of the Darau al-Yahubiye lane, containing an individually drawn courtyard compound. Block-level outline."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.229677,
+              31.776278
+            ],
+            [
+              35.23004,
+              31.776325
+            ],
+            [
+              35.230323,
+              31.776267
+            ],
+            [
+              35.230258,
+              31.776047
+            ],
+            [
+              35.229885,
+              31.775928
+            ],
+            [
+              35.229673,
+              31.776032
+            ],
+            [
+              35.229677,
+              31.776278
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-blk-63",
+        "name": "Block 63 (Wilson 1865)",
+        "nameHe": "גוש 63 (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "mixed",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "הגוש שוילסון מספרר 63, בגבול הרובע הארמני. מתאר ברמת גוש.",
+        "notes": "Wilson's block 63 at the Armenian quarter edge. Block-level outline."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.230062,
+              31.776342
+            ],
+            [
+              35.230606,
+              31.776339
+            ],
+            [
+              35.230522,
+              31.776081
+            ],
+            [
+              35.230222,
+              31.776019
+            ],
+            [
+              35.230023,
+              31.776205
+            ],
+            [
+              35.230062,
+              31.776342
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-blk-62",
+        "name": "Block 62 (Wilson 1865)",
+        "nameHe": "גוש 62 (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "mixed",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "הגוש שוילסון מספרר 62, בין חארת א-דוואיה לחארת אל-ג'אוואני. מתאר ברמת גוש.",
+        "notes": "Wilson's block 62 between Harat ad-Dawaye and Harat al-Jawany. Block-level outline."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.229967,
+              31.775958
+            ],
+            [
+              35.230283,
+              31.775993
+            ],
+            [
+              35.230281,
+              31.775764
+            ],
+            [
+              35.229954,
+              31.775739
+            ],
+            [
+              35.229967,
+              31.775958
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-deir-as-surian",
+        "name": "Deir as-Surian — the Syriac convent (Wilson block 4)",
+        "nameHe": "דיר א-סוריאן — מנזר הסורים (גוש 4 אצל וילסון)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "religious-compound",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "המתחם שוילסון מסמן \"Deir as-Surian 4\" — מנזר הסורים-אורתודוקסים (מסורת מר מרקוס). מתאר מתחם.",
+        "notes": "The compound Wilson labels \"Deir as-Surian 4\" — the Syriac Orthodox convent (St Mark's tradition). Compound outline."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            35.228601,
+            31.776529
+          ],
+          [
+            35.228549,
+            31.77644
+          ],
+          [
+            35.228496,
+            31.776303
+          ],
+          [
+            35.228417,
+            31.776164
+          ],
+          [
+            35.228341,
+            31.775999
+          ],
+          [
+            35.228285,
+            31.775834
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-harat-al-maukaf",
+        "name": "Harat al-Maukaf street along the citadel (Wilson 1865)",
+        "nameHe": "רחוב חארת אל-מאוכף לאורך המצודה (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "road",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "הרחוב היורד דרומה מרחוב דוד לאורך חזית המצודה — קו האמצע כפי שמדד וילסון.",
+        "notes": "The street descending south from David Street along the citadel front — centerline as Wilson surveyed it."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
         "type": "LineString",
         "coordinates": [
           [
