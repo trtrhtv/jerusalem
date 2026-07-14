@@ -8,11 +8,21 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { baseStyle } from "@/lib/mapStyle";
 import { evidenceTierMeta, getSource } from "@/lib/data";
 import {
+  addClockFaces,
+  addCrenellations,
+  addOpenings,
+  addRoofDomes,
+  applyEvidenceMode,
+  buildSky,
+  buildTrees,
+  makeGroundTexture,
+  makeStoneTexture,
+} from "@/lib/walk3d";
+import {
   elementExistsAt,
   walkScene,
   type WalkElement,
 } from "@/lib/walkScene";
-import type { EvidenceTier } from "@/lib/types";
 
 const EYE_HEIGHT = 1.7;
 const WALK_SPEED = 9; // m/s (brisk walk — the area is large)
@@ -42,11 +52,16 @@ const KIND_COLOR: Record<WalkElement["kind"], number> = {
   moat: 0x6e6a5e,
 };
 
-const TIER_OPACITY: Record<EvidenceTier, number> = {
-  documented: 1,
-  typological: 0.8,
-  conjecture: 0.4,
-};
+// stone texture per element kind, generated once (client only)
+const stoneTexCache = new Map<string, THREE.Texture>();
+function stoneTex(kind: WalkElement["kind"]): THREE.Texture {
+  let t = stoneTexCache.get(kind);
+  if (!t) {
+    t = makeStoneTexture(KIND_COLOR[kind], "stone-" + kind);
+    stoneTexCache.set(kind, t);
+  }
+  return t;
+}
 
 function buildElementMesh(el: WalkElement): THREE.Object3D {
   const group = new THREE.Group();
@@ -65,28 +80,33 @@ function buildElementMesh(el: WalkElement): THREE.Object3D {
   const geo = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false });
   geo.rotateX(-Math.PI / 2);
 
-  const opacity = TIER_OPACITY[el.evidenceTier];
-  const mat = new THREE.MeshLambertMaterial({
-    color: KIND_COLOR[el.kind],
-    transparent: opacity < 1,
-    opacity,
-  });
+  const stoneKinds = ["wall", "gate", "tower", "citadel", "minaret", "building"];
+  const mat = new THREE.MeshLambertMaterial(
+    el.kind === "ground"
+      ? { map: makeGroundTexture() }
+      : stoneKinds.includes(el.kind)
+        ? { map: stoneTex(el.kind) }
+        : { color: KIND_COLOR[el.kind] },
+  );
   const mesh = new THREE.Mesh(geo, mat);
   mesh.position.y = el.baseHeight ?? 0;
   mesh.userData.elementId = el.id;
+  if (el.height > 0.5) {
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+  } else {
+    mesh.receiveShadow = true;
+  }
   group.add(mesh);
 
-  // crisp low-poly edges (skip flat surfaces where they just add noise)
+  // crisp low-poly edges, softened now that surfaces carry texture
   if (el.height > 0.5) {
     const edges = new THREE.LineSegments(
       new THREE.EdgesGeometry(geo, 30),
-      new THREE.LineBasicMaterial({
-        color: 0x5c5342,
-        transparent: opacity < 1,
-        opacity: Math.min(1, opacity + 0.15),
-      }),
+      new THREE.LineBasicMaterial({ color: 0x5c5342, transparent: true, opacity: 0.35 }),
     );
     edges.position.y = el.baseHeight ?? 0;
+    edges.userData.decor = true;
     group.add(edges);
   }
 
@@ -115,6 +135,18 @@ function buildElementMesh(el: WalkElement): THREE.Object3D {
     }
   }
 
+  // Stage-A decoration: openings, battlements, domes, clock faces
+  addOpenings(group, el);
+  addCrenellations(group, el, mat);
+  addRoofDomes(group, el, mat);
+  addClockFaces(group, el);
+
+  // stamp tier on everything for the evidence-mode toggle; keep picking ids
+  group.traverse((o) => {
+    o.userData.tier = el.evidenceTier;
+    if (!o.userData.elementId) o.userData.elementId = el.id;
+  });
+
   return group;
 }
 
@@ -136,7 +168,14 @@ export function WalkScene() {
   const [year, setYear] = useState(initialWalkYear);
   const [locked, setLocked] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [evidenceMode, setEvidenceMode] = useState(false);
   const controlsRef = useRef<PointerLockControls | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+
+  // E — evidence mode: the world reveals what it is actually built on
+  useEffect(() => {
+    if (sceneRef.current) applyEvidenceMode(sceneRef.current, evidenceMode);
+  }, [evidenceMode]);
 
   const selected: WalkElement | null = useMemo(() => {
     const el = walkScene.elements.find((e) => e.id === selectedId) ?? null;
@@ -166,8 +205,11 @@ export function WalkScene() {
     const meshIndex = meshIndexRef.current;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xdcd3c0); // hazy limestone sky
-    scene.fog = new THREE.Fog(0xdcd3c0, 120, 420);
+    sceneRef.current = scene;
+    scene.background = new THREE.Color(0xe8ddc4); // horizon haze (matches sky dome)
+    scene.fog = new THREE.Fog(0xe8ddc4, 130, 430);
+    scene.add(buildSky());
+    scene.add(buildTrees());
 
     const camera = new THREE.PerspectiveCamera(
       70,
@@ -182,11 +224,21 @@ export function WalkScene() {
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     mount.appendChild(renderer.domElement);
 
-    scene.add(new THREE.HemisphereLight(0xf4ecd8, 0x8a7f66, 0.95));
-    const sun = new THREE.DirectionalLight(0xfff2d8, 1.35);
+    scene.add(new THREE.HemisphereLight(0xf4ecd8, 0x8a7f66, 0.9));
+    const sun = new THREE.DirectionalLight(0xfff2d8, 1.5);
     sun.position.set(-140, 180, 90); // warm afternoon light from the southwest
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.left = -180;
+    sun.shadow.camera.right = 180;
+    sun.shadow.camera.top = 180;
+    sun.shadow.camera.bottom = -180;
+    sun.shadow.camera.far = 600;
+    sun.shadow.bias = -0.0004;
     scene.add(sun);
 
     for (const el of walkScene.elements) {
@@ -227,7 +279,10 @@ export function WalkScene() {
     const camDir = new THREE.Vector3();
 
     const keys = new Set<string>();
-    const onKeyDown = (e: KeyboardEvent) => keys.add(e.code);
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "KeyE") setEvidenceMode((v) => !v);
+      keys.add(e.code);
+    };
     const onKeyUp = (e: KeyboardEvent) => keys.delete(e.code);
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("keyup", onKeyUp);
@@ -368,7 +423,7 @@ export function WalkScene() {
         >
           <span className="block text-sm font-bold">לחצו כאן להליכה 🚶</span>
           <span className="mt-0.5 block text-xs text-neutral-500">
-            WASD/חצים לתנועה · עכבר להבטה · Shift לריצה · קליק על מבנה = מקורות · ESC ליציאה
+            WASD/חצים לתנועה · עכבר להבטה · Shift לריצה · קליק על מבנה = מקורות · E למצב ראיות · ESC ליציאה
           </span>
         </button>
       )}
@@ -391,15 +446,17 @@ export function WalkScene() {
       {/* evidence legend (3D variant) */}
       <div className="pointer-events-none absolute bottom-0 left-0 z-10 p-3">
         <div className="pointer-events-auto max-w-xs rounded-xl border border-black/10 bg-white/90 p-3 text-xs shadow-lg backdrop-blur dark:border-white/10 dark:bg-neutral-900/90">
-          <div className="mb-1 font-semibold">מדרג ראיות בתלת-ממד</div>
+          <div className="mb-1 flex items-center justify-between font-semibold">
+            <span>מדרג ראיות</span>
+            <kbd className="rounded bg-black/10 px-1.5 py-0.5 text-[10px] dark:bg-white/15">E</kbd>
+          </div>
           <ul className="space-y-0.5">
-            <li><b>מתועד</b> — גוף מלא</li>
-            <li><b>טיפולוגי</b> — שקוף חלקית (המסה ידועה, המבנה לא)</li>
-            <li><b>השערה</b> — רפאים (כמעט שקוף)</li>
+            <li><b>מצב חוויה</b> — העולם מלא ורציף</li>
+            <li><b>מצב ראיות (E)</b> — מתועד מלא · טיפולוגי שקוף · השערה רפאים</li>
           </ul>
           <p className="mt-2 border-t border-black/10 pt-2 text-[10px] leading-snug text-neutral-500 dark:border-white/10">
-            זהו מחקר מסות low-poly מכוון — לא שחזור פוטוריאליסטי. גבהים ומתארים
-            מוערכים מהמקורות; הקרקע שוטחה. קליק על כל מבנה מציג את מקורותיו.
+            הדמיה מסוגננת נאמנת-מקורות: מתארים וגבהים מוערכים מהמקורות, הפרטים
+            (פתחים, כיפות, עצים) טיפולוגיים. קליק על כל מבנה מציג את מקורותיו.
           </p>
         </div>
       </div>
