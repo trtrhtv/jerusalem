@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { baseStyle } from "@/lib/mapStyle";
@@ -16,6 +15,8 @@ import {
   buildSky,
   buildTrees,
   makeGroundTexture,
+  makeRoadTexture,
+  makeRoofTexture,
   makeStoneTexture,
 } from "@/lib/walk3d";
 import {
@@ -71,6 +72,19 @@ function stoneTex(kind: WalkElement["kind"]): THREE.Texture {
   return t;
 }
 
+// shared roof/road textures (client only, lazy)
+let roofTexSingleton: THREE.Texture | null = null;
+function roofTex(): THREE.Texture {
+  return (roofTexSingleton ??= makeRoofTexture());
+}
+let roadTexSingleton: THREE.Texture | null = null;
+function roadTex(): THREE.Texture {
+  return (roadTexSingleton ??= makeRoadTexture());
+}
+
+/** Timeline range of the walk's year slider (matches the map). */
+const WALK_TIMELINE = { min: 1500, max: 1930 } as const;
+
 function buildElementMesh(el: WalkElement): THREE.Object3D {
   const group = new THREE.Group();
   group.name = el.id;
@@ -92,11 +106,19 @@ function buildElementMesh(el: WalkElement): THREE.Object3D {
   const mat = new THREE.MeshLambertMaterial(
     el.kind === "ground"
       ? { map: makeGroundTexture() }
-      : stoneKinds.includes(el.kind)
-        ? { map: stoneTex(el.kind) }
-        : { color: KIND_COLOR[el.kind] },
+      : el.kind === "road"
+        ? { map: roadTex() }
+        : stoneKinds.includes(el.kind)
+          ? { map: stoneTex(el.kind) }
+          : { color: KIND_COLOR[el.kind] },
   );
-  const mesh = new THREE.Mesh(geo, mat);
+  // buildings get a pale plaster roof cap (extrude group 0 = caps, 1 = walls)
+  const mesh = new THREE.Mesh(
+    geo,
+    el.kind === "building"
+      ? [new THREE.MeshLambertMaterial({ map: roofTex() }), mat]
+      : mat,
+  );
   mesh.position.y = el.baseHeight ?? 0;
   mesh.userData.elementId = el.id;
   if (el.height > 0.5) {
@@ -174,11 +196,14 @@ export function WalkScene() {
   const meshIndexRef = useRef<Map<string, THREE.Object3D>>(new Map());
   const yearRef = useRef(walkScene.defaultYear);
   const [year, setYear] = useState(initialWalkYear);
-  const [locked, setLocked] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [evidenceMode, setEvidenceMode] = useState(false);
-  const controlsRef = useRef<PointerLockControls | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
+  /** Running construction/demolition animations, consumed by the render loop. */
+  const transitionsRef = useRef<
+    Map<string, { obj: THREE.Object3D; appear: boolean; start: number }>
+  >(new Map());
 
   // E — evidence mode: the world reveals what it is actually built on
   useEffect(() => {
@@ -190,14 +215,46 @@ export function WalkScene() {
     return el && elementExistsAt(el, year) ? el : null;
   }, [selectedId, year]);
 
-  // apply year to scene visibility
+  // Apply year to the scene — the city builds itself: elements whose build
+  // year is crossed RISE from the ground; demolished ones sink away. Flat
+  // surfaces (roads, the pool) snap — there is nothing to "construct" visually.
   useEffect(() => {
     yearRef.current = year;
     for (const el of allElements) {
       const obj = meshIndexRef.current.get(el.id);
-      if (obj) obj.visible = elementExistsAt(el, year);
+      if (!obj) continue;
+      const target = elementExistsAt(el, year);
+      const shown = (obj.userData.shown as boolean | undefined) ?? obj.visible;
+      if (shown === target) continue;
+      obj.userData.shown = target;
+      if (el.height < 1) {
+        obj.visible = target;
+        transitionsRef.current.delete(el.id);
+        continue;
+      }
+      obj.visible = true;
+      transitionsRef.current.set(el.id, {
+        obj,
+        appear: target,
+        start: performance.now(),
+      });
     }
   }, [year]);
+
+  // ▶ play — sweep the timeline and watch the corridor build itself
+  useEffect(() => {
+    if (!playing) return;
+    const id = setInterval(() => {
+      setYear((y) => {
+        if (y >= WALK_TIMELINE.max) {
+          setPlaying(false);
+          return y;
+        }
+        return y + 1;
+      });
+    }, 70);
+    return () => clearInterval(id);
+  }, [playing]);
 
   // keep the shareable ?year= param in sync
   useEffect(() => {
@@ -263,14 +320,19 @@ export function WalkScene() {
     sun.shadow.bias = -0.0004;
     scene.add(sun);
 
-    // typological generator materials (shared across all generated elements)
+    // typological generator materials — tonal stone variants (the generator
+    // clones per element, so evidence-mode opacity stays element-local)
     const kitMats: KitMaterials = {
-      stone: new THREE.MeshLambertMaterial({ map: stoneTex("building") }),
-      stoneDouble: new THREE.MeshLambertMaterial({
-        map: stoneTex("building"),
-        side: THREE.DoubleSide,
-      }),
-      road: new THREE.MeshLambertMaterial({ color: KIND_COLOR.road }),
+      stoneVariants: [0xcfc0a0, 0xc6b28c, 0xdacdb0].map(
+        (c, i) =>
+          new THREE.MeshLambertMaterial({
+            map: makeStoneTexture(c, "stone-gen-" + i),
+            side: THREE.DoubleSide,
+          }),
+      ),
+      roof: new THREE.MeshLambertMaterial({ map: roofTex() }),
+      road: new THREE.MeshLambertMaterial({ map: roadTex() }),
+      frame: new THREE.MeshLambertMaterial({ color: 0xded2b4 }),
     };
 
     for (const el of allElements) {
@@ -278,14 +340,10 @@ export function WalkScene() {
         ? buildGeneratedElement(el as GeneratedWalkElement, kitMats)
         : buildElementMesh(el);
       obj.visible = elementExistsAt(el, yearRef.current);
+      obj.userData.shown = obj.visible;
       meshIndex.set(el.id, obj);
       scene.add(obj);
     }
-
-    const controls = new PointerLockControls(camera, renderer.domElement);
-    controlsRef.current = controls;
-    controls.addEventListener("lock", () => setLocked(true));
-    controls.addEventListener("unlock", () => setLocked(false));
 
     // --- present-day minimap: where you are relative to today's city ---
     let minimap: maplibregl.Map | null = null;
@@ -314,7 +372,16 @@ export function WalkScene() {
 
     const keys = new Set<string>();
     const onKeyDown = (e: KeyboardEvent) => {
+      // don't steal keys from form controls (the year slider)
+      if ((e.target as HTMLElement | null)?.tagName === "INPUT") return;
       if (e.code === "KeyE") setEvidenceMode((v) => !v);
+      if (e.code.startsWith("Digit")) {
+        const preset = walkScene.yearPresets[Number(e.code.slice(5)) - 1];
+        if (preset) {
+          setPlaying(false);
+          setYear(preset);
+        }
+      }
       keys.add(e.code);
     };
     const onKeyUp = (e: KeyboardEvent) => keys.delete(e.code);
@@ -331,10 +398,39 @@ export function WalkScene() {
       const id = hits[0]?.object.userData.elementId as string | undefined;
       setSelectedId(id && id !== "walk-ground" ? id : null);
     };
-    const onClick = (e: MouseEvent) => {
-      if (controls.isLocked) {
-        pick(new THREE.Vector2(0, 0)); // crosshair pick
-      } else {
+
+    // --- drag-to-look: no pointer lock, so the mouse stays free for the UI.
+    // Drag rotates the view; a click without a drag picks a building.
+    const look = new THREE.Euler().setFromQuaternion(camera.quaternion, "YXZ");
+    let dragging = false;
+    let dragDist = 0;
+    let lastX = 0;
+    let lastY = 0;
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.button !== 0) return;
+      dragging = true;
+      dragDist = 0;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      renderer.domElement.setPointerCapture(e.pointerId);
+    };
+    const onPointerMove = (e: PointerEvent) => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      dragDist += Math.abs(dx) + Math.abs(dy);
+      look.y -= dx * 0.0042;
+      look.x = THREE.MathUtils.clamp(look.x - dy * 0.0042, -1.45, 1.45);
+      look.z = 0;
+      camera.quaternion.setFromEuler(look);
+    };
+    const onPointerUp = (e: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      renderer.domElement.releasePointerCapture(e.pointerId);
+      if (dragDist < 6) {
         const r = renderer.domElement.getBoundingClientRect();
         pick(
           new THREE.Vector2(
@@ -344,7 +440,9 @@ export function WalkScene() {
         );
       }
     };
-    renderer.domElement.addEventListener("click", onClick);
+    renderer.domElement.addEventListener("pointerdown", onPointerDown);
+    renderer.domElement.addEventListener("pointermove", onPointerMove);
+    renderer.domElement.addEventListener("pointerup", onPointerUp);
 
     const onResize = () => {
       camera.aspect = mount.clientWidth / mount.clientHeight;
@@ -354,22 +452,42 @@ export function WalkScene() {
     window.addEventListener("resize", onResize);
 
     const clock = new THREE.Clock();
+    const moveDir = new THREE.Vector3();
+    const rightVec = new THREE.Vector3();
     let raf = 0;
     const animate = () => {
       raf = requestAnimationFrame(animate);
       const dt = Math.min(clock.getDelta(), 0.1);
-      if (controls.isLocked) {
-        const fwd = Number(keys.has("KeyW") || keys.has("ArrowUp")) -
-          Number(keys.has("KeyS") || keys.has("ArrowDown"));
-        const right = Number(keys.has("KeyD") || keys.has("ArrowRight")) -
-          Number(keys.has("KeyA") || keys.has("ArrowLeft"));
+      const fwd = Number(keys.has("KeyW") || keys.has("ArrowUp")) -
+        Number(keys.has("KeyS") || keys.has("ArrowDown"));
+      const right = Number(keys.has("KeyD") || keys.has("ArrowRight")) -
+        Number(keys.has("KeyA") || keys.has("ArrowLeft"));
+      if (fwd || right) {
         const boost = keys.has("ShiftLeft") || keys.has("ShiftRight") ? 2 : 1;
-        if (fwd) controls.moveForward(fwd * WALK_SPEED * boost * dt);
-        if (right) controls.moveRight(right * WALK_SPEED * boost * dt);
+        camera.getWorldDirection(moveDir);
+        moveDir.y = 0;
+        moveDir.normalize();
+        rightVec.set(-moveDir.z, 0, moveDir.x);
+        camera.position.addScaledVector(moveDir, fwd * WALK_SPEED * boost * dt);
+        camera.position.addScaledVector(rightVec, right * WALK_SPEED * boost * dt);
         // stay on the ground and inside the modeled area
         camera.position.y = EYE_HEIGHT;
         camera.position.x = THREE.MathUtils.clamp(camera.position.x, BOUND_X[0], BOUND_X[1]);
         camera.position.z = THREE.MathUtils.clamp(camera.position.z, BOUND_Z[0], BOUND_Z[1]);
+      }
+      // construction/demolition: rise from the ground / sink away
+      if (transitionsRef.current.size) {
+        const nowMs = performance.now();
+        for (const [id, tr] of transitionsRef.current) {
+          const t = Math.min(1, (nowMs - tr.start) / 900);
+          const k = t * t * (3 - 2 * t); // smoothstep
+          tr.obj.scale.y = Math.max(0.001, tr.appear ? k : 1 - k);
+          if (t >= 1) {
+            tr.obj.scale.y = tr.appear ? 1 : 0.001;
+            if (!tr.appear) tr.obj.visible = false;
+            transitionsRef.current.delete(id);
+          }
+        }
       }
       // update the present-day minimap ~5×/sec
       miniAccum += dt;
@@ -392,8 +510,9 @@ export function WalkScene() {
       window.removeEventListener("resize", onResize);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
-      renderer.domElement.removeEventListener("click", onClick);
-      controls.dispose();
+      renderer.domElement.removeEventListener("pointerdown", onPointerDown);
+      renderer.domElement.removeEventListener("pointermove", onPointerMove);
+      renderer.domElement.removeEventListener("pointerup", onPointerUp);
       renderer.dispose();
       mount.removeChild(renderer.domElement);
       scene.traverse((o) => {
@@ -414,20 +533,42 @@ export function WalkScene() {
     <div className="relative h-full w-full select-none">
       <div ref={mountRef} className="absolute inset-0 cursor-crosshair" />
 
-      {/* year presets */}
+      {/* time bar: play (the city builds itself) + slider + presets */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center p-3">
-        <div className="pointer-events-auto flex items-center gap-2 rounded-xl border border-black/10 bg-white/90 p-2 shadow-lg backdrop-blur dark:border-white/10 dark:bg-neutral-900/90">
-          <span className="px-1 text-xs text-neutral-500">שנה:</span>
-          {!walkScene.yearPresets.includes(year) && (
-            <span className="rounded-lg bg-neutral-800 px-3 py-1 text-sm font-semibold tabular-nums text-white dark:bg-neutral-200 dark:text-neutral-900">
-              {year}
-            </span>
-          )}
-          {walkScene.yearPresets.map((y) => (
+        <div className="pointer-events-auto flex flex-wrap items-center gap-2 rounded-xl border border-black/10 bg-white/90 p-2 shadow-lg backdrop-blur dark:border-white/10 dark:bg-neutral-900/90">
+          <button
+            onClick={() => setPlaying((p) => !p)}
+            title="ניגון — העיר נבנית מול העיניים"
+            className="grid h-8 w-8 place-items-center rounded-full bg-neutral-800 text-sm text-white transition hover:bg-neutral-600 dark:bg-neutral-200 dark:text-neutral-900 dark:hover:bg-white"
+          >
+            {playing ? "⏸" : "▶"}
+          </button>
+          <span className="w-12 text-center text-sm font-bold tabular-nums">
+            {year}
+          </span>
+          <input
+            dir="ltr"
+            type="range"
+            min={WALK_TIMELINE.min}
+            max={WALK_TIMELINE.max}
+            value={year}
+            onChange={(e) => {
+              setPlaying(false);
+              setYear(Number(e.target.value));
+            }}
+            onPointerUp={(e) => (e.target as HTMLInputElement).blur()}
+            className="w-36 accent-neutral-800 sm:w-52 dark:accent-neutral-200"
+            aria-label="שנה"
+          />
+          {walkScene.yearPresets.map((y, i) => (
             <button
               key={y}
-              onClick={() => setYear(y)}
-              className={`rounded-lg px-3 py-1 text-sm font-semibold tabular-nums transition ${
+              onClick={() => {
+                setPlaying(false);
+                setYear(y);
+              }}
+              title={`מקש ${i + 1}`}
+              className={`rounded-lg px-2.5 py-1 text-sm font-semibold tabular-nums transition ${
                 year === y
                   ? "bg-neutral-800 text-white dark:bg-neutral-200 dark:text-neutral-900"
                   : "bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20"
@@ -436,9 +577,6 @@ export function WalkScene() {
               {y}
             </button>
           ))}
-          <span className="hidden px-1 text-[10px] text-neutral-400 sm:block">
-            1870: לפני הפרצה · 1900: אחרי הפרצה · 1915: עם מגדל השעון
-          </span>
           <a
             href={`/?year=${year}`}
             className="rounded-lg bg-black/5 px-2.5 py-1 text-xs hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20"
@@ -449,23 +587,12 @@ export function WalkScene() {
         </div>
       </div>
 
-      {/* start / controls hint */}
-      {!locked && (
-        <button
-          onClick={() => controlsRef.current?.lock()}
-          className="absolute inset-x-0 bottom-16 z-10 mx-auto w-fit rounded-xl border border-black/10 bg-white/95 px-5 py-3 text-center shadow-xl backdrop-blur transition hover:bg-white dark:border-white/10 dark:bg-neutral-900/95 dark:hover:bg-neutral-900"
-        >
-          <span className="block text-sm font-bold">לחצו כאן להליכה 🚶</span>
-          <span className="mt-0.5 block text-xs text-neutral-500">
-            WASD/חצים לתנועה · עכבר להבטה · Shift לריצה · קליק על מבנה = מקורות · E למצב ראיות · ESC ליציאה
-          </span>
-        </button>
-      )}
-      {locked && (
-        <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 text-xl text-white/80 mix-blend-difference">
-          +
+      {/* controls hint — the mouse is free: drag to look, click to inspect */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center p-3">
+        <div className="rounded-full border border-black/10 bg-white/80 px-4 py-1.5 text-[11px] text-neutral-600 shadow backdrop-blur dark:border-white/10 dark:bg-neutral-900/80 dark:text-neutral-300">
+          גררו עם העכבר להבטה · WASD/חצים להליכה · Shift ריצה · קליק על מבנה = מקורות · E מצב ראיות · 1/2/3 שנים
         </div>
-      )}
+      </div>
 
       {/* present-day minimap: your position vs. today's city */}
       <div className="pointer-events-none absolute bottom-0 right-0 z-10 p-3">

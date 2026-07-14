@@ -65,6 +65,69 @@ export function makeStoneTexture(base: number, seedStr = "stone"): THREE.CanvasT
   return tex;
 }
 
+/** Flat roof surface — pale plaster/limewash with subtle weathering. */
+export function makeRoofTexture(seedStr = "roof"): THREE.CanvasTexture {
+  const size = 256;
+  const c = document.createElement("canvas");
+  c.width = size;
+  c.height = size;
+  const g = c.getContext("2d")!;
+  const rand = seededRand(seedStr);
+  const base = 0xcabe9f;
+  g.fillStyle = shade(base, 0);
+  g.fillRect(0, 0, size, size);
+  for (let i = 0; i < 1600; i++) {
+    g.fillStyle = shade(base, Math.floor((rand() - 0.5) * 20));
+    g.fillRect(rand() * size, rand() * size, 2 + rand() * 4, 2 + rand() * 4);
+  }
+  // faint weathering patches
+  g.globalAlpha = 0.18;
+  for (let i = 0; i < 30; i++) {
+    g.fillStyle = shade(base, -14);
+    g.beginPath();
+    g.arc(rand() * size, rand() * size, 8 + rand() * 20, 0, Math.PI * 2);
+    g.fill();
+  }
+  g.globalAlpha = 1;
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(0.18, 0.18); // ~5.5 m per tile
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+/** Worn street paving: irregular cobble courses in grey-umber. */
+export function makeRoadTexture(): THREE.CanvasTexture {
+  const size = 256;
+  const c = document.createElement("canvas");
+  c.width = size;
+  c.height = size;
+  const g = c.getContext("2d")!;
+  const rand = seededRand("road");
+  const base = 0x93897a;
+  g.fillStyle = shade(base, -28); // joints
+  g.fillRect(0, 0, size, size);
+  const rowH = 22;
+  for (let y = 0, row = 0; y < size; y += rowH, row++) {
+    let x = -Math.floor(rand() * 24) + (row % 2 ? 12 : 0);
+    while (x < size) {
+      const w = 20 + Math.floor(rand() * 16);
+      if (rand() > 0.06) {
+        g.fillStyle = shade(base, Math.floor((rand() - 0.5) * 30));
+        g.beginPath();
+        g.roundRect(x + 1.5, y + 1.5, w - 3, rowH - 3, 5);
+        g.fill();
+      }
+      x += w;
+    }
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(0.22, 0.22); // a cobble reads ~0.4 m
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
 /** Dusty ground with faint tracks and stains. */
 export function makeGroundTexture(): THREE.CanvasTexture {
   const size = 512;

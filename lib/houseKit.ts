@@ -34,12 +34,23 @@ const WATER_MAT = new THREE.MeshLambertMaterial({ color: 0x51705f });
 const DOOR_GEO = new THREE.ShapeGeometry(archShape(1.4, 2.6));
 const WIN_GEO = new THREE.ShapeGeometry(archShape(0.85, 1.6));
 const PORTAL_GEO = new THREE.ShapeGeometry(archShape(2.6, 3.4));
+// dressed-stone frames drawn behind the dark openings (voussoir hint)
+const DOOR_FRAME_GEO = new THREE.ShapeGeometry(archShape(1.4 * 1.35, 2.6 * 1.13));
+const WIN_FRAME_GEO = new THREE.ShapeGeometry(archShape(0.85 * 1.5, 1.6 * 1.22));
+const PORTAL_FRAME_GEO = new THREE.ShapeGeometry(archShape(2.6 * 1.28, 3.4 * 1.12));
 
 export interface KitMaterials {
-  stone: THREE.Material;
-  /** Double-sided stone for open shells (domes) seen from below street level. */
-  stoneDouble: THREE.Material;
+  /**
+   * Stone wall variants (double-sided so dome shells read from below).
+   * The generator picks one per building — deterministic tonal variety.
+   */
+  stoneVariants: THREE.Material[];
+  /** Pale plaster/limewash for flat roof caps. */
+  roof: THREE.Material;
+  /** Cobbled street paving. */
   road: THREE.Material;
+  /** Dressed-stone opening frames. */
+  frame: THREE.Material;
 }
 
 // ---------- small geometry helpers ----------
@@ -158,19 +169,19 @@ function addRoomUnit(
   z: number,
   top: number,
   rand: () => number,
-  mat: KitMaterials,
+  mat: THREE.Material,
 ): void {
   const w = 3 + rand() * 1.6;
   const d = 3 + rand() * 1.6;
   const h = 2.6 + rand() * 0.7;
-  const room = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat.stone);
+  const room = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
   room.position.set(x, top + h / 2, z);
   room.rotation.y = (rand() - 0.5) * 0.12;
   room.castShadow = true;
   room.userData.decor = true;
   group.add(room);
   if (rand() < 0.7) {
-    const dome = makeDome(Math.min(w, d) * 0.36, mat.stoneDouble);
+    const dome = makeDome(Math.min(w, d) * 0.36, mat);
     dome.position.set(x, top + h, z);
     group.add(dome);
   }
@@ -224,12 +235,13 @@ function addExteriorStairs(
   group.add(inst);
 }
 
-/** Arched doors/windows (קשתות) along the outer facades. */
+/** Arched doors/windows (קשתות) with dressed-stone frames along the facades. */
 function addKitOpenings(
   group: THREE.Group,
   ring: P2[],
   height: number,
   rand: () => number,
+  frameMat: THREE.Material,
 ): void {
   const floors = Math.max(1, Math.min(3, Math.floor(height / 3.3)));
   for (const e of edgesWithNormals(ring)) {
@@ -237,14 +249,20 @@ function addKitOpenings(
     const count = Math.floor((e.len - 1.5) / 3.9);
     for (let i = 0; i < count; i++) {
       const t = (i + 0.5 + (rand() - 0.5) * 0.2) / count;
-      const x = e.ax + (e.bx - e.ax) * t + e.nx * 0.07;
-      const z = e.az + (e.bz - e.az) * t + e.nz * 0.07;
+      const x = e.ax + (e.bx - e.ax) * t;
+      const z = e.az + (e.bz - e.az) * t;
       const rotY = Math.atan2(e.nx, e.nz);
       for (let f = 0; f < floors; f++) {
         if (rand() < 0.28) continue; // irregular vernacular rhythm
         const isDoor = f === 0 && rand() < 0.45;
+        const y = f * 3.3 + (isDoor ? 0 : 1.15);
+        const frame = new THREE.Mesh(isDoor ? DOOR_FRAME_GEO : WIN_FRAME_GEO, frameMat);
+        frame.position.set(x + e.nx * 0.045, y, z + e.nz * 0.045);
+        frame.rotation.y = rotY;
+        frame.userData.decor = true;
+        group.add(frame);
         const m = new THREE.Mesh(isDoor ? DOOR_GEO : WIN_GEO, OPENING_MAT);
-        m.position.set(x, f * 3.3 + (isDoor ? 0 : 1.15), z);
+        m.position.set(x + e.nx * 0.08, y, z + e.nz * 0.08);
         m.rotation.y = rotY;
         m.userData.decor = true;
         group.add(m);
@@ -259,13 +277,14 @@ function addKitOpenings(
 function buildPool(el: GeneratedWalkElement, mats: KitMaterials): THREE.Group {
   const group = new THREE.Group();
   group.name = el.id;
+  const stone = mats.stoneVariants[0].clone();
   // rim wall around the surveyed outline
-  addParapet(group, el.footprint, 0.35, mats.stone);
-  const rimBase = new THREE.Mesh(extrude(el.footprint, 0.35), mats.stone);
+  addParapet(group, el.footprint, 0.35, stone);
+  const rimBase = new THREE.Mesh(extrude(el.footprint, 0.35), stone);
   rimBase.receiveShadow = true;
   group.add(rimBase);
   const waterRing = insetPolygon(el.footprint, 0.9) ?? el.footprint;
-  const water = new THREE.Mesh(extrude(waterRing, 0.05), WATER_MAT);
+  const water = new THREE.Mesh(extrude(waterRing, 0.05), WATER_MAT.clone());
   water.position.y = 0.32;
   water.userData.decor = true;
   group.add(water);
@@ -275,7 +294,7 @@ function buildPool(el: GeneratedWalkElement, mats: KitMaterials): THREE.Group {
 function buildRoad(el: GeneratedWalkElement, mats: KitMaterials): THREE.Group {
   const group = new THREE.Group();
   group.name = el.id;
-  const mesh = new THREE.Mesh(extrude(el.footprint, el.height || 0.12), mats.road);
+  const mesh = new THREE.Mesh(extrude(el.footprint, el.height || 0.12), mats.road.clone());
   mesh.receiveShadow = true;
   group.add(mesh);
   return group;
@@ -301,6 +320,14 @@ export function buildGeneratedElement(
   const fp = el.footprint;
   const area = polygonArea(fp);
 
+  // per-building material clones: a deterministic stone tone per element, and
+  // isolated instances so the evidence-mode opacity never leaks across elements
+  const stone = mats.stoneVariants[
+    Math.floor(rand() * mats.stoneVariants.length)
+  ].clone();
+  const roof = mats.roof.clone();
+  const frame = mats.frame.clone();
+
   // courtyard (חצר): large, COMPACT blocks hollow out around a central court.
   // Long/irregular blocks (compactness below threshold) stay solid — a
   // centroid inset of a 140 m lens would carve a canyon, not a courtyard.
@@ -323,8 +350,9 @@ export function buildGeneratedElement(
     }
   }
 
+  // roof cap gets pale plaster, walls get the building's stone tone
   const geo = extrude(fp, el.height, courtyard);
-  const mass = new THREE.Mesh(geo, mats.stone);
+  const mass = new THREE.Mesh(geo, [roof, stone]);
   mass.castShadow = true;
   mass.receiveShadow = true;
   group.add(mass);
@@ -338,8 +366,8 @@ export function buildGeneratedElement(
   group.add(edgesMesh);
 
   // roof parapet along the outer (and courtyard) rims
-  addParapet(group, fp, el.height, mats.stone);
-  if (courtyard) addParapet(group, courtyard, el.height, mats.stone);
+  addParapet(group, fp, el.height, stone);
+  if (courtyard) addParapet(group, courtyard, el.height, stone);
 
   // rooftop vaulted room units + domes, kept away from the parapet
   const xs = fp.map((p) => p[0]);
@@ -352,7 +380,7 @@ export function buildGeneratedElement(
     if (!pointInPolygon(x, z, fp)) continue;
     if (courtyard && pointInPolygon(x, z, courtyard)) continue;
     if (distToOutline(x, z, fp) < 3) continue;
-    addRoomUnit(group, x, z, el.height, rand, mats);
+    addRoomUnit(group, x, z, el.height, rand, stone);
     placedRooms++;
   }
   for (let attempt = 0; attempt < 40; attempt++) {
@@ -364,13 +392,13 @@ export function buildGeneratedElement(
     // keep domes clearly inboard so they never overhang the facade line
     const r = 1.1 + rand() * 0.6;
     if (distToOutline(x, z, fp) < r + 2.2) continue;
-    const dome = makeDome(r, mats.stoneDouble);
+    const dome = makeDome(r, stone);
     dome.position.set(x, el.height, z);
     group.add(dome);
   }
 
   // arched openings on every outer facade (old-city blocks front lanes all around)
-  addKitOpenings(group, fp, el.height, rand);
+  addKitOpenings(group, fp, el.height, rand, frame);
 
   // exterior stairs on one or two of the longer facades (residential fabric)
   if (el.buildingType === "mixed") {
@@ -378,7 +406,7 @@ export function buildGeneratedElement(
     const stairCount = Math.min(longEdges.length, rand() < 0.6 ? 2 : 1);
     for (let s = 0; s < stairCount; s++) {
       const e = longEdges[Math.floor(rand() * longEdges.length)];
-      addExteriorStairs(group, e, rand, mats.stone);
+      addExteriorStairs(group, e, rand, stone);
     }
   }
 
@@ -387,6 +415,15 @@ export function buildGeneratedElement(
     const candidates = edgesWithNormals(fp).filter((e) => e.len > 10);
     if (candidates.length) {
       const e = candidates[Math.floor(rand() * candidates.length)];
+      const portalFrame = new THREE.Mesh(PORTAL_FRAME_GEO, frame);
+      portalFrame.position.set(
+        (e.ax + e.bx) / 2 + e.nx * 0.05,
+        0,
+        (e.az + e.bz) / 2 + e.nz * 0.05,
+      );
+      portalFrame.rotation.y = Math.atan2(e.nx, e.nz);
+      portalFrame.userData.decor = true;
+      group.add(portalFrame);
       const portal = new THREE.Mesh(PORTAL_GEO, OPENING_MAT);
       portal.position.set(
         (e.ax + e.bx) / 2 + e.nx * 0.09,
