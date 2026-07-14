@@ -12,7 +12,7 @@ import type { WalkElement } from "./walkScene";
 
 // ---------- deterministic pseudo-random ----------
 
-function seededRand(seedStr: string): () => number {
+export function seededRand(seedStr: string): () => number {
   let seed = 0;
   for (const ch of seedStr) seed = (seed * 31 + ch.charCodeAt(0)) % 2147483647;
   if (seed <= 0) seed += 2147483646;
@@ -96,7 +96,7 @@ const OPENING_MAT = new THREE.MeshBasicMaterial({ color: 0x211b13, side: THREE.D
 const CLOCK_MAT = new THREE.MeshBasicMaterial({ color: 0xf4efe2, side: THREE.DoubleSide });
 
 /** Pointed/round arch shape used for doors and windows. */
-function archShape(w: number, h: number): THREE.Shape {
+export function archShape(w: number, h: number): THREE.Shape {
   const s = new THREE.Shape();
   const r = w / 2;
   s.moveTo(-r, 0);
@@ -113,18 +113,18 @@ const MERLON_GEO = new THREE.BoxGeometry(0.7, 0.7, 0.35);
 
 // ---------- footprint helpers ----------
 
-type P2 = [number, number];
+export type P2 = [number, number];
 
-function centroid(pts: P2[]): P2 {
+export function centroid(pts: P2[]): P2 {
   let sx = 0, sz = 0;
   for (const [x, z] of pts) { sx += x; sz += z; }
   return [sx / pts.length, sz / pts.length];
 }
 
-interface Edge { ax: number; az: number; bx: number; bz: number; len: number; nx: number; nz: number }
+export interface Edge { ax: number; az: number; bx: number; bz: number; len: number; nx: number; nz: number }
 
 /** Polygon edges with outward normals (decided against the centroid). */
-function edgesWithNormals(pts: P2[]): Edge[] {
+export function edgesWithNormals(pts: P2[]): Edge[] {
   const [cx, cz] = centroid(pts);
   const out: Edge[] = [];
   for (let i = 0; i < pts.length; i++) {

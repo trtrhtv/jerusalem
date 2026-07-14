@@ -23,10 +23,17 @@ import {
   walkScene,
   type WalkElement,
 } from "@/lib/walkScene";
+import { wilsonWalkElements, type GeneratedWalkElement } from "@/lib/wilsonScene";
+import { buildGeneratedElement, type KitMaterials } from "@/lib/houseKit";
 
 const EYE_HEIGHT = 1.7;
 const WALK_SPEED = 9; // m/s (brisk walk — the area is large)
-const BOUND = 200;
+// walkable rectangle: extended east so David Street can be walked to the bazaars
+const BOUND_X: [number, number] = [-200, 330];
+const BOUND_Z: [number, number] = [-200, 200];
+
+/** Hand-modeled pilot elements + everything generated from the Wilson survey. */
+const allElements: WalkElement[] = [...walkScene.elements, ...wilsonWalkElements];
 
 /**
  * Local scene meters → WGS84, anchored at the scene origin (the Jaffa Gate
@@ -50,6 +57,7 @@ const KIND_COLOR: Record<WalkElement["kind"], number> = {
   building: 0xcfc0a0,
   road: 0x8f8878,
   moat: 0x6e6a5e,
+  pool: 0x51705f,
 };
 
 // stone texture per element kind, generated once (client only)
@@ -178,14 +186,14 @@ export function WalkScene() {
   }, [evidenceMode]);
 
   const selected: WalkElement | null = useMemo(() => {
-    const el = walkScene.elements.find((e) => e.id === selectedId) ?? null;
+    const el = allElements.find((e) => e.id === selectedId) ?? null;
     return el && elementExistsAt(el, year) ? el : null;
   }, [selectedId, year]);
 
   // apply year to scene visibility
   useEffect(() => {
     yearRef.current = year;
-    for (const el of walkScene.elements) {
+    for (const el of allElements) {
       const obj = meshIndexRef.current.get(el.id);
       if (obj) obj.visible = elementExistsAt(el, year);
     }
@@ -206,6 +214,8 @@ export function WalkScene() {
 
     const scene = new THREE.Scene();
     sceneRef.current = scene;
+    // debugging/tooling hook (harmless in production)
+    (window as unknown as { __scene?: THREE.Scene }).__scene = scene;
     scene.background = new THREE.Color(0xe8ddc4); // horizon haze (matches sky dome)
     scene.fog = new THREE.Fog(0xe8ddc4, 130, 430);
     scene.add(buildSky());
@@ -217,9 +227,21 @@ export function WalkScene() {
       0.1,
       600,
     );
-    // start on the plaza west of the gate, looking at it
-    camera.position.set(-28, EYE_HEIGHT, -6);
-    camera.lookAt(4, 8, -5);
+    // start on the plaza west of the gate, looking at it; ?pos=x,z&look=x,z
+    // overrides the spawn (shareable viewpoints, browser testing)
+    const params = new URLSearchParams(window.location.search);
+    const posParam = (params.get("pos") ?? "").split(",").map(Number);
+    const lookParam = (params.get("look") ?? "").split(",").map(Number);
+    if (posParam.length >= 2 && posParam.every(Number.isFinite)) {
+      camera.position.set(posParam[0], posParam[2] ?? EYE_HEIGHT, posParam[1]);
+    } else {
+      camera.position.set(-28, EYE_HEIGHT, -6);
+    }
+    if (lookParam.length >= 2 && lookParam.every(Number.isFinite)) {
+      camera.lookAt(lookParam[0], lookParam[2] ?? EYE_HEIGHT, lookParam[1]);
+    } else {
+      camera.lookAt(4, 8, -5);
+    }
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(mount.clientWidth, mount.clientHeight);
@@ -234,15 +256,27 @@ export function WalkScene() {
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     sun.shadow.camera.left = -180;
-    sun.shadow.camera.right = 180;
+    sun.shadow.camera.right = 340; // covers the generated corridor to the bazaars
     sun.shadow.camera.top = 180;
     sun.shadow.camera.bottom = -180;
     sun.shadow.camera.far = 600;
     sun.shadow.bias = -0.0004;
     scene.add(sun);
 
-    for (const el of walkScene.elements) {
-      const obj = buildElementMesh(el);
+    // typological generator materials (shared across all generated elements)
+    const kitMats: KitMaterials = {
+      stone: new THREE.MeshLambertMaterial({ map: stoneTex("building") }),
+      stoneDouble: new THREE.MeshLambertMaterial({
+        map: stoneTex("building"),
+        side: THREE.DoubleSide,
+      }),
+      road: new THREE.MeshLambertMaterial({ color: KIND_COLOR.road }),
+    };
+
+    for (const el of allElements) {
+      const obj = (el as GeneratedWalkElement).generated
+        ? buildGeneratedElement(el as GeneratedWalkElement, kitMats)
+        : buildElementMesh(el);
       obj.visible = elementExistsAt(el, yearRef.current);
       meshIndex.set(el.id, obj);
       scene.add(obj);
@@ -334,8 +368,8 @@ export function WalkScene() {
         if (right) controls.moveRight(right * WALK_SPEED * boost * dt);
         // stay on the ground and inside the modeled area
         camera.position.y = EYE_HEIGHT;
-        camera.position.x = THREE.MathUtils.clamp(camera.position.x, -BOUND, BOUND);
-        camera.position.z = THREE.MathUtils.clamp(camera.position.z, -BOUND, BOUND);
+        camera.position.x = THREE.MathUtils.clamp(camera.position.x, BOUND_X[0], BOUND_X[1]);
+        camera.position.z = THREE.MathUtils.clamp(camera.position.z, BOUND_Z[0], BOUND_Z[1]);
       }
       // update the present-day minimap ~5×/sec
       miniAccum += dt;
@@ -490,6 +524,14 @@ export function WalkScene() {
                   {selected.builtYearApprox ? "~" : ""}
                   {selected.builtYear}
                   {selected.demolishedYear ? `–${selected.demolishedYear}` : ""}
+                </span>
+              )}
+              {selected.geometryConfidence === "surveyed" && (
+                <span
+                  className="rounded-full bg-sky-700 px-2 py-0.5 text-xs font-semibold text-white"
+                  title="המתאר דוגט ממפת וילסון 1865 המיושרת — הצורה מדודה, לא מוערכת"
+                >
+                  📐 מתאר מדוד 1865
                 </span>
               )}
             </div>

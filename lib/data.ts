@@ -2,6 +2,7 @@ import periodsRaw from "@/data/periods.json";
 import sourcesRaw from "@/data/sources.json";
 import corridorRaw from "@/data/features/jaffa-gate-corridor.json";
 import cityGrowthRaw from "@/data/features/city-growth.json";
+import wilsonBuildingsRaw from "@/data/features/wilson-1865-buildings.json";
 import viewpointsRaw from "@/data/viewpoints.json";
 import type {
   EvidenceTier,
@@ -30,12 +31,17 @@ export const allSources: SourceRecord[] = Object.values(sourceMap);
 
 const corridorFC = corridorRaw as unknown as TimeFeatureCollection;
 const cityGrowthFC = cityGrowthRaw as unknown as TimeFeatureCollection;
+const wilsonFC = wilsonBuildingsRaw as unknown as TimeFeatureCollection;
 
-/** All map features: the pilot corridor + the city-growth layer, merged. */
+/**
+ * All map features: the pilot corridor + the city-growth layer + the blocks
+ * digitized from the Wilson 1865 survey (the same file also drives the
+ * walking scene's typological generator — one data file feeds both views).
+ */
 export const corridor: TimeFeatureCollection = {
   type: "FeatureCollection",
   name: "Jerusalem time layers (all feature files)",
-  features: [...corridorFC.features, ...cityGrowthFC.features],
+  features: [...corridorFC.features, ...cityGrowthFC.features, ...wilsonFC.features],
 };
 
 // JSON widens tuple coordinates to number[], so go through unknown.

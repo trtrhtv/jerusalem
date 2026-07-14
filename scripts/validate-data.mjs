@@ -21,6 +21,7 @@ const { sources } = read("data/sources.json");
 const FEATURE_FILES = [
   "data/features/jaffa-gate-corridor.json",
   "data/features/city-growth.json",
+  "data/features/wilson-1865-buildings.json",
 ];
 
 const periodKeys = new Set(periods.map((p) => p.key));

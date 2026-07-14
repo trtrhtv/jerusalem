@@ -1,0 +1,535 @@
+{
+  "type": "FeatureCollection",
+  "name": "wilson-1865-buildings",
+  "metadata": {
+    "generatedBy": "scripts/digitize-wilson.mjs — do not edit by hand; edit the traced pixel polygons there and re-run",
+    "method": "Block outlines and street centerlines traced visually on the Huntington scan (data/scans/wilson-1865-huntington-3532px.jpg) over gridded 4x enlargements, then transformed to WGS84 via the affine fit of the 5 ground-control points in public/annotations/wilson-1865.json plus a tie-point correction pinning the Jaffa Gate GCP exactly.",
+    "accuracy": "Global georeference RMS ~26 m; near the gate corridor the tie-point correction brings expected error to ~5-10 m. Tracing precision ~2 px (~1.2 m).",
+    "scope": "The David Street corridor: Jaffa Gate plaza to the triple bazaars. Blocks, not individual houses — the honest resolution of a 1:2500 survey."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.228231,
+              31.776743
+            ],
+            [
+              35.228275,
+              31.776777
+            ],
+            [
+              35.228467,
+              31.776766
+            ],
+            [
+              35.228467,
+              31.776722
+            ],
+            [
+              35.228447,
+              31.776629
+            ],
+            [
+              35.228206,
+              31.776617
+            ],
+            [
+              35.228174,
+              31.776622
+            ],
+            [
+              35.228231,
+              31.776743
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-bldg-plaza-northeast",
+        "name": "Courtyard building at the gate plaza's northeast corner (Wilson 1865)",
+        "nameHe": "בניין החצר בפינה הצפון-מזרחית של כיכר השער (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "mixed",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "הבניין הבודד שוילסון מצייר בפינת הכיכר, חזיתו אל רחוב דוד וחצרו נפתחת דרומה. ממערב וצפונה לו — קרקע פתוחה (גינות הרובע), שוילסון מבחין ממנה בהצללה: את השטח הפתוח הזה במכוון לא דיגטנו כבינוי.",
+        "notes": "The single courtyard building Wilson draws at the plaza corner, fronting David Street. West and north of it lies open ground (quarter gardens) which Wilson distinguishes by lighter hatching — deliberately NOT digitized as built fabric."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.228764,
+              31.777378
+            ],
+            [
+              35.229267,
+              31.777407
+            ],
+            [
+              35.229183,
+              31.776745
+            ],
+            [
+              35.22866,
+              31.776716
+            ],
+            [
+              35.228764,
+              31.777378
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-pool-hezekiah",
+        "name": "Pool of Hezekiah (Birket Hammam al-Batrak)",
+        "nameHe": "בריכת חזקיהו (בירכת חמאם אל-בטרק)",
+        "builtPeriod": "second-temple",
+        "builtYear": null,
+        "buildingType": "monument",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "בריכת המים הגדולה שוילסון מסמן \"Birket Hammam al Batrak (Pool of Hezekiah)\" — 120×78 פיקסלים בסריקה ≈ 74×48 מ', תואם למידותיה המתועדות (כ-73×44 מ'), אימות עצמאי לקנה המידה של היישור. קיומה ב-1865 מתועד במדידה; זיהויה עם בריכה עתיקה (מגדלון של יוספוס) הוא מסורת מחקרית — התאריך מקורב במכוון.",
+        "notes": "The great open reservoir Wilson labels \"Birket Hammam al Batrak (Pool of Hezekiah)\" — 120×78 scan pixels ≈ 74×48 m, matching its documented ~73×44 m, an independent check of the georeference scale. Its 1865 existence is documented by the survey; identification with the ancient pool (Josephus' Amygdalon) is scholarly tradition — dating deliberately approximate."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.229335,
+              31.776945
+            ],
+            [
+              35.229387,
+              31.776947
+            ],
+            [
+              35.229377,
+              31.776876
+            ],
+            [
+              35.22952,
+              31.776879
+            ],
+            [
+              35.22956,
+              31.776935
+            ],
+            [
+              35.229776,
+              31.776951
+            ],
+            [
+              35.229778,
+              31.776875
+            ],
+            [
+              35.229906,
+              31.776867
+            ],
+            [
+              35.230061,
+              31.776904
+            ],
+            [
+              35.23022,
+              31.776886
+            ],
+            [
+              35.230418,
+              31.776913
+            ],
+            [
+              35.230611,
+              31.776907
+            ],
+            [
+              35.230723,
+              31.776871
+            ],
+            [
+              35.230699,
+              31.7768
+            ],
+            [
+              35.230395,
+              31.776754
+            ],
+            [
+              35.230066,
+              31.776718
+            ],
+            [
+              35.229738,
+              31.776688
+            ],
+            [
+              35.22921,
+              31.776708
+            ],
+            [
+              35.229335,
+              31.776945
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-blk-david-north-strip",
+        "name": "Shop strip north of David Street incl. block 17 (Wilson 1865)",
+        "nameHe": "רצועת החנויות מצפון לרחוב דוד כולל גוש 17 (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "commercial",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "הרצועה הבנויה בין רחוב דוד (\"Sûk al Bizâr\") לשטח המוריסתאן, מרחוב הנוצרים עד השווקים המשולשים — וילסון מסמן בה שורת תאי חנויות ואת גוש 17.",
+        "notes": "The built strip between David Street (\"Sûk al Bizâr\") and the open Muristan, from Christian Street to the triple bazaars — Wilson draws its row of shop cells and block 17."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.228605,
+              31.776518
+            ],
+            [
+              35.228812,
+              31.776556
+            ],
+            [
+              35.22917,
+              31.776614
+            ],
+            [
+              35.229125,
+              31.776444
+            ],
+            [
+              35.229067,
+              31.776224
+            ],
+            [
+              35.228759,
+              31.776195
+            ],
+            [
+              35.228594,
+              31.776223
+            ],
+            [
+              35.228557,
+              31.776408
+            ],
+            [
+              35.228605,
+              31.776518
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-blk-65",
+        "name": "Block 65, south of David Street (Wilson 1865)",
+        "nameHe": "גוש 65 מדרום לרחוב דוד (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "mixed",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "הגוש שוילסון מספרר 65: בין רחוב דוד (צפון), דרך אל-מאוכף לאורך המצודה (מערב) והסמטאות שמדרום.",
+        "notes": "Wilson's block 65: bounded by David Street (north), Harat al-Maukaf along the citadel (west) and the lanes to the south."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.22923,
+              31.776583
+            ],
+            [
+              35.22973,
+              31.776639
+            ],
+            [
+              35.230258,
+              31.776707
+            ],
+            [
+              35.230695,
+              31.776772
+            ],
+            [
+              35.230629,
+              31.776411
+            ],
+            [
+              35.230121,
+              31.776436
+            ],
+            [
+              35.22964,
+              31.776468
+            ],
+            [
+              35.22939,
+              31.776527
+            ],
+            [
+              35.22923,
+              31.776583
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-blk-67",
+        "name": "Block 67 between David St and Harat ad-Dawaye (Wilson 1865)",
+        "nameHe": "גוש 67 בין רחוב דוד לחארת א-דוואיה (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "mixed",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "הגוש דמוי-העדשה שוילסון מספרר 67, בין רחוב דוד לרחוב חארת א-דוואיה המתפצל ממנו מזרחה — מתחדד לצומת במערב ומתרחב אל השווקים במזרח.",
+        "notes": "Wilson's lens-shaped block 67 between David Street and the diverging Harat ad-Dawaye — tapering to their junction at the west, widening to the bazaars at the east."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              35.229181,
+              31.776511
+            ],
+            [
+              35.229445,
+              31.776463
+            ],
+            [
+              35.229647,
+              31.776424
+            ],
+            [
+              35.229585,
+              31.776221
+            ],
+            [
+              35.229192,
+              31.776195
+            ],
+            [
+              35.229102,
+              31.776242
+            ],
+            [
+              35.229153,
+              31.776456
+            ],
+            [
+              35.229181,
+              31.776511
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-blk-64",
+        "name": "Block 64, south of Harat ad-Dawaye (Wilson 1865)",
+        "nameHe": "גוש 64 מדרום לחארת א-דוואיה (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "mixed",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "הגוש שוילסון מספרר 64, מדרום לחארת א-דוואיה ובגבול הרובע הארמני.",
+        "notes": "Wilson's block 64, south of Harat ad-Dawaye at the edge of the Armenian quarter."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            35.227823,
+            31.776526
+          ],
+          [
+            35.228101,
+            31.776565
+          ],
+          [
+            35.228431,
+            31.776606
+          ],
+          [
+            35.228823,
+            31.776633
+          ],
+          [
+            35.229189,
+            31.776658
+          ],
+          [
+            35.229734,
+            31.776661
+          ],
+          [
+            35.230261,
+            31.776723
+          ],
+          [
+            35.23071,
+            31.776784
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-david-street",
+        "name": "David Street (Suwaikat Allun / Suk al-Bizar), Wilson 1865",
+        "nameHe": "רחוב דוד (סוויקת עלון / סוק אל-ביזאר), וילסון 1865",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "road",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "ציר רחוב דוד משער יפו עד השווקים המשולשים, כפי שמדד וילסון — קו האמצע של הרחוב. התוואי עתיק בהרבה מ-1865; כאן מתועד מיקומו המדויק.",
+        "notes": "The David Street axis from Jaffa Gate to the triple bazaars as Wilson surveyed it — the street centerline. The alignment is far older than 1865; what is documented here is its measured position."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            35.229424,
+            31.777635
+          ],
+          [
+            35.229347,
+            31.777333
+          ],
+          [
+            35.229266,
+            31.777004
+          ],
+          [
+            35.229212,
+            31.776811
+          ],
+          [
+            35.229184,
+            31.776707
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-harat-an-nasara",
+        "name": "Harat an-Nasara / Christian Quarter street (Wilson 1865)",
+        "nameHe": "חארת א-נסארה / רחוב הנוצרים (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "road",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "רחוב הרובע הנוצרי התוחם את בריכת חזקיהו ממזרח ונפגש עם רחוב דוד — קו האמצע כפי שמדד וילסון. הצלע הצפונית של צומת הפיילוט.",
+        "notes": "The Christian-quarter street bounding the Pool of Hezekiah on the east, meeting David Street — centerline as Wilson surveyed it. The pilot junction's northern arm."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            35.229197,
+            31.776533
+          ],
+          [
+            35.22948,
+            31.77648
+          ],
+          [
+            35.229703,
+            31.776453
+          ],
+          [
+            35.230119,
+            31.77642
+          ],
+          [
+            35.230649,
+            31.776373
+          ]
+        ]
+      },
+      "properties": {
+        "id": "wilson-harat-ad-dawaye",
+        "name": "Harat ad-Dawaye street (Wilson 1865)",
+        "nameHe": "רחוב חארת א-דוואיה (וילסון 1865)",
+        "builtPeriod": "mamluk",
+        "builtYear": null,
+        "buildingType": "road",
+        "evidenceTier": "documented",
+        "geometryConfidence": "surveyed",
+        "sources": [
+          "wilson-1865"
+        ],
+        "notesHe": "הרחוב המתפצל מרחוב דוד מזרחה-דרומה — קו האמצע כפי שמדד וילסון.",
+        "notes": "The street diverging southeast from David Street — centerline as Wilson surveyed it."
+      }
+    }
+  ]
+}

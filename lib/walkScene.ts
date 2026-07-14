@@ -18,7 +18,8 @@ export interface WalkElement {
     | "minaret"
     | "building"
     | "road"
-    | "moat";
+    | "moat"
+    | "pool";
   /** Polygon footprint, [x, z] pairs in meters. */
   footprint: [number, number][];
   /** Extrusion height in meters (0 → thin slab). */
@@ -34,6 +35,8 @@ export interface WalkElement {
   sources: string[];
   notes?: string;
   notesHe?: string;
+  /** Present on elements generated from digitized survey data. */
+  geometryConfidence?: "surveyed" | "approximate" | "schematic";
 }
 
 export interface WalkSceneData {

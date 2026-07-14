@@ -111,6 +111,15 @@
   חלקית, השערה=רפאים. הסצנה תלוית-זמן: ב-1870 החומה רציפה, ב-1900 הפרצה
   פתוחה, ב-1915 מגדל השעון עומד (ונעלם אחרי 1922). דאטה:
   [`data/walk/jaffa-gate-scene.json`](data/walk/jaffa-gate-scene.json).
+- ✅ **שלב ב' — רחוב שנבנה מהדאטה:** מתארי מבנים ורחובות דוגטו ממפת וילסון
+  1865 המיושרת ([`data/features/wilson-1865-buildings.json`](data/features/wilson-1865-buildings.json),
+  `geometryConfidence: "surveyed"`; הצנרת ב-`scripts/wilson-transform.mjs` +
+  `scripts/digitize-wilson.mjs`), ו"ערכת הבית הירושלמי" הפרמטרית
+  ([`lib/houseKit.ts`](lib/houseKit.ts): חדר מקומר, כיפה, קשת, מדרגות חוץ,
+  חצר, מעקה — וריאציה דטרמיניסטית מ-seed) מרכיבה מהם מבנים תלת-ממדיים.
+  **אותו קובץ GeoJSON מזין את מפת ציר-הזמן ואת ההליכה** — רחוב דוד נבנה
+  כולו מהמחולל, והמתארים המדודים מסומנים "📐 מתאר מדוד 1865" בכרטיס.
+  הגבהים טיפולוגיים ומוצהרים ככאלה עד חילוץ גבהים אמיתיים (שלב ג').
 
 ## אזור הפיילוט · Pilot area
 
@@ -138,7 +147,9 @@ npm run build      # בניית production
 
 **קישורים שיתופיים:** השנה נשמרת ב-URL — `/?year=1880` פותח את המפה ב-1880,
 `/walk?year=1915` פותח את מצב ההליכה עם מגדל השעון. המעבר מפה↔הליכה משמר את
-השנה בשני הכיוונים.
+השנה בשני הכיוונים. במצב ההליכה אפשר גם לשתף נקודת מבט:
+`/walk?year=1900&pos=180,-20&look=280,-30` (מטרים מקומיים; רכיב שלישי
+אופציונלי = גובה עין).
 
 ## דיפלוי · Deployment
 
@@ -166,15 +177,22 @@ lib/
   data.ts                טעינת נתונים ועזרי זמן/תקופות
   mapStyle.ts            סגנון בסיס MapLibre (רקע ניטרלי + OSM)
   walkScene.ts           טיפוסי סצנת ההליכה + לוגיקת קיום-לפי-שנה
+  walk3d.ts              עזרי Three.js משותפים (טקסטורות, קשתות, מצב ראיות)
+  wilsonScene.ts         גשר GeoJSON⟵סצנה: המרת המתארים המדודים למטרים מקומיים
+  houseKit.ts            ערכת הבית הירושלמי + המחולל הטיפולוגי (שלב ב')
 data/
   schema/feature.schema.json   סכמת JSON לאלמנט
   periods.json                 הגדרות תקופות + צבעים
   sources.json                 מרשם מקורות + זכויות
   viewpoints.json              נקודות מצלמה: תצלומים היסטוריים מאומתים פר-פריט
   features/jaffa-gate-corridor.json   דאטת הפיילוט
+  features/wilson-1865-buildings.json מתארים מדודים מווילסון (מזין מפה+הליכה)
+  scans/                       סריקת וילסון 1865 (המקור לדיגיטציה)
   walk/jaffa-gate-scene.json   מסות סצנת ההליכה (מקומי, מטרים, מעוגן-מקורות)
 public/photos/           עותקי נחלת-הכלל של התצלומים + ATTRIBUTION.md
 scripts/validate-data.mjs      שער יושרת הנתונים
+scripts/wilson-transform.mjs   טרנספורם פיקסל⟵עולם של סריקת וילסון (GCPs)
+scripts/digitize-wilson.mjs    המתארים שדוגטו (פיקסלים) ⟵ GeoJSON
 ```
 
 ## תרומת נתונים · Contributing data
