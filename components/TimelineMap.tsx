@@ -191,6 +191,13 @@ export function TimelineMap() {
       const layer = new WarpedMapLayer({ layerId }) as unknown as WarpedLayerLike;
       // insert under our vector layers so the history stays readable on top
       map.addLayer(layer as never, "poly-fill");
+      // the layer's renderer is created in its onAdd, which MapLibre may run a
+      // frame later — poll briefly until it exists
+      for (let i = 0; i < 40; i++) {
+        if ((layer as unknown as { renderer?: unknown }).renderer) break;
+        map.triggerRepaint();
+        await new Promise((r) => setTimeout(r, 50));
+      }
       await layer.addGeoreferenceAnnotationByUrl(m.annotationUrl);
       layer.setOpacity(m.defaultOpacity);
       warpedLayersRef.current.set(m.id, layer);

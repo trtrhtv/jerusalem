@@ -140,8 +140,18 @@ for (const m of historicMaps) {
   if (!["ready", "awaiting-georeference"].includes(m.status)) {
     fail(`[${id}] bad status "${m.status}"`);
   }
-  if (m.status === "ready" && !/^https:\/\//.test(m.annotationUrl ?? "")) {
-    fail(`[${id}] status=ready requires an https annotationUrl`);
+  if (m.status === "ready") {
+    const u = m.annotationUrl ?? "";
+    if (/^https:\/\//.test(u)) {
+      // remote annotation — fine
+    } else if (u.startsWith("/")) {
+      // self-hosted annotation must actually exist under public/
+      if (!existsSync(resolve(root, "public", u.slice(1)))) {
+        fail(`[${id}] self-hosted annotation "${u}" missing in public/`);
+      }
+    } else {
+      fail(`[${id}] status=ready requires an https or site-relative annotationUrl`);
+    }
   }
   if (m.status !== "ready" && m.annotationUrl) {
     fail(`[${id}] has annotationUrl but status is not "ready" — set status accordingly`);

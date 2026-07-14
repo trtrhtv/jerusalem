@@ -1,0 +1,112 @@
+{
+  "type": "Annotation",
+  "@context": [
+    "http://iiif.io/api/extension/georef/1/context.json",
+    "http://iiif.io/api/presentation/3/context.json"
+  ],
+  "motivation": "georeferencing",
+  "target": {
+    "type": "SpecificResource",
+    "source": {
+      "id": "https://cdm16003.contentdm.oclc.org/digital/iiif/p15150coll4/7159",
+      "type": "ImageService2",
+      "height": 10219,
+      "width": 7064,
+      "partOf": [
+        {
+          "id": "https://hdl.huntington.org/iiif/info/p15150coll4/7159/manifest.json",
+          "type": "Manifest"
+        }
+      ]
+    },
+    "selector": {
+      "type": "SvgSelector",
+      "value": "<svg width=\"7064\" height=\"10219\"><polygon points=\"820,1070 6910,1070 6910,9600 820,9600\" /></svg>"
+    }
+  },
+  "body": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "resourceCoords": [
+            2776,
+            5880
+          ]
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            35.227694,
+            31.776528
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "resourceCoords": [
+            3540,
+            4010
+          ]
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            35.230451,
+            31.781636
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "resourceCoords": [
+            3620,
+            7210
+          ]
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            35.229361,
+            31.772861
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "resourceCoords": [
+            5070,
+            5450
+          ]
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            35.235401,
+            31.778
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "resourceCoords": [
+            5648,
+            5056
+          ]
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            35.23694,
+            31.77889
+          ]
+        }
+      }
+    ]
+  }
+}

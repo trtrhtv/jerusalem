@@ -7,11 +7,11 @@
       "titleHe": "מדידת וילסון 1865",
       "year": 1865,
       "sourceId": "wilson-1865",
-      "annotationUrl": null,
-      "status": "awaiting-georeference",
+      "annotationUrl": "/annotations/wilson-1865.json",
+      "status": "ready",
       "defaultOpacity": 0.75,
-      "notes": "The first scientific survey of Jerusalem. Once georeferenced (docs/WILSON-GEOREF.md), this becomes the base for tracing surveyed building footprints — and a viewable layer under the timeline map.",
-      "notesHe": "המיפוי המדעי הראשון של ירושלים. אחרי יישור גיאוגרפי (ראו docs/WILSON-GEOREF.md) המפה תשמש בסיס לדיגיטציה של מתארי מבנים מדודים — ושכבה לצפייה מתחת למפת ציר-הזמן."
+      "notes": "The first scientific survey of Jerusalem, scanned by the Huntington Library (IIIF). Georeferenced with 5 control points (Jaffa/Damascus/Zion gates, Dome of the Rock, Golden Gate; coordinates verified against Wikipedia), affine RMS ~25-30 m. Good for neighborhood-scale overlay and tracing; refine in the Allmaps editor for parcel-level precision (docs/WILSON-GEOREF.md).",
+      "notesHe": "המיפוי המדעי הראשון של ירושלים, בסריקת ספריית הנטינגטון (IIIF). יושר עם 5 נקודות עיגון (שער יפו/שכם/ציון, כיפת הסלע, שער הרחמים; קואורדינטות מאומתות מול ויקיפדיה), שגיאת RMS ‏~25–30 מ'. מתאים לשכבת-על ולדיגיטציה ברמת שכונה; לדיוק ברמת מגרש יש לחדד ב-Allmaps Editor (ראו docs/WILSON-GEOREF.md)."
     }
   ]
 }
