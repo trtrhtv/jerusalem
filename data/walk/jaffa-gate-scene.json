@@ -14,8 +14,8 @@
       "builtYear": null,
       "evidenceTier": "conjecture",
       "sources": [],
-      "notesHe": "פישוט מכוון: הקרקע שוטחה. בפועל השטח משופע — גיא בן הינום יורד דרומה-מערבה. יתוקן כשנחלץ גבהים מתצ\"א 1917/18.",
-      "notes": "Deliberate simplification: terrain flattened. In reality the ground slopes toward the Hinnom Valley southwest. To be corrected once heights are extracted from the 1917/18 aerial stereo pairs."
+      "notesHe": "שלב ג': הקרקע כבר לא שטוחה — התבליט נבנה על 4 נקודות גובה מדודות שוילסון עצמו רשם (\"B.M.\", רגל מעל פני הים התיכון; data/features/wilson-1865-elevations.json, lib/terrain.ts), בין-שוליות בשקלול-מרחק הופכת (IDW). זו הקלה אמיתית ומתועדת סביב מקטע רחוב דוד, לא DEM מדויק ולא תביעה לירידה המלאה של גיא בן הינום מעבר לטווח הנתונים. גבהי המבנים (בשונה מהקרקע) נשארים טיפולוגיים — לא הופעל צינור פוטוגרמטריה על זוגות הסטריאו של תצ\"א 1917/18 (התצלומים עצמם אינם נגישים בסביבה הזו).",
+      "notes": "Stage C: the ground is no longer flat — its relief comes from 4 real elevation points Wilson himself leveled (\"B.M.\", feet above the Mediterranean; data/features/wilson-1865-elevations.json, lib/terrain.ts), inverse-distance-weighted between them. This is real, documented relief around the David Street corridor — not a precise DEM, and not a claim about the full Hinnom Valley descent beyond the data's reach. Building HEIGHTS (unlike the ground) remain typological — no photogrammetry pipeline was run against the 1917/18 aerial stereo pairs (the archival images themselves aren't accessible in this environment)."
     },
     {
       "id": "walk-wall-north",

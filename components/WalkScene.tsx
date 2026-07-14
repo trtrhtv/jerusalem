@@ -26,6 +26,13 @@ import {
 } from "@/lib/walkScene";
 import { wilsonWalkElements, type GeneratedWalkElement } from "@/lib/wilsonScene";
 import { buildGeneratedElement, type KitMaterials } from "@/lib/houseKit";
+import {
+  benchmarkWalkElements,
+  buildTerrainGroundGeometry,
+  drapeOntoTerrain,
+  elevationAt,
+  elevationAtCentroid,
+} from "@/lib/terrain";
 
 const EYE_HEIGHT = 1.7;
 const WALK_SPEED = 9; // m/s (brisk walk — the area is large)
@@ -33,8 +40,16 @@ const WALK_SPEED = 9; // m/s (brisk walk — the area is large)
 const BOUND_X: [number, number] = [-200, 330];
 const BOUND_Z: [number, number] = [-200, 200];
 
-/** Hand-modeled pilot elements + everything generated from the Wilson survey. */
-const allElements: WalkElement[] = [...walkScene.elements, ...wilsonWalkElements];
+/**
+ * Hand-modeled pilot elements + everything generated from the Wilson survey
+ * + the leveled benchmarks (Stage C) that drive the terrain and are, in
+ * their own right, clickable documented evidence.
+ */
+const allElements: WalkElement[] = [
+  ...walkScene.elements,
+  ...wilsonWalkElements,
+  ...benchmarkWalkElements,
+];
 
 /**
  * Local scene meters → WGS84, anchored at the scene origin (the Jaffa Gate
@@ -59,6 +74,7 @@ const KIND_COLOR: Record<WalkElement["kind"], number> = {
   road: 0x8f8878,
   moat: 0x6e6a5e,
   pool: 0x51705f,
+  benchmark: 0xa8402c,
 };
 
 // stone texture per element kind, generated once (client only)
@@ -102,15 +118,15 @@ function buildElementMesh(el: WalkElement): THREE.Object3D {
   const geo = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false });
   geo.rotateX(-Math.PI / 2);
 
+  // "ground" never reaches this function — it gets its own terrain-following
+  // mesh in the main build loop (see buildTerrainGroundGeometry).
   const stoneKinds = ["wall", "gate", "tower", "citadel", "minaret", "building"];
   const mat = new THREE.MeshLambertMaterial(
-    el.kind === "ground"
-      ? { map: makeGroundTexture() }
-      : el.kind === "road"
-        ? { map: roadTex() }
-        : stoneKinds.includes(el.kind)
-          ? { map: stoneTex(el.kind) }
-          : { color: KIND_COLOR[el.kind] },
+    el.kind === "road"
+      ? { map: roadTex() }
+      : stoneKinds.includes(el.kind)
+        ? { map: stoneTex(el.kind) }
+        : { color: KIND_COLOR[el.kind] },
   );
   // buildings get a pale plaster roof cap (extrude group 0 = caps, 1 = walls)
   const mesh = new THREE.Mesh(
@@ -314,15 +330,18 @@ export function WalkScene() {
     const posParam = (params.get("pos") ?? "").split(",").map(Number);
     const lookParam = (params.get("look") ?? "").split(",").map(Number);
     if (posParam.length >= 2 && posParam.every(Number.isFinite)) {
-      camera.position.set(posParam[0], posParam[2] ?? EYE_HEIGHT, posParam[1]);
+      const y = posParam[2] ?? elevationAt(posParam[0], posParam[1]) + EYE_HEIGHT;
+      camera.position.set(posParam[0], y, posParam[1]);
     } else {
-      camera.position.set(-28, EYE_HEIGHT, -6);
+      camera.position.set(-28, elevationAt(-28, -6) + EYE_HEIGHT, -6);
     }
     if (lookParam.length >= 2 && lookParam.every(Number.isFinite)) {
       camera.lookAt(lookParam[0], lookParam[2] ?? EYE_HEIGHT, lookParam[1]);
     } else {
       camera.lookAt(4, 8, -5);
     }
+    // debugging/tooling hook (harmless in production)
+    (window as unknown as { __camera?: THREE.Camera }).__camera = camera;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(mount.clientWidth, mount.clientHeight);
@@ -360,9 +379,42 @@ export function WalkScene() {
     };
 
     for (const el of allElements) {
-      const obj = (el as GeneratedWalkElement).generated
-        ? buildGeneratedElement(el as GeneratedWalkElement, kitMats)
-        : buildElementMesh(el);
+      let obj: THREE.Object3D;
+      if (el.kind === "ground") {
+        // Stage C: a subdivided, terrain-following ground instead of a flat
+        // slab — sampled from Wilson's own leveled benchmarks (lib/terrain.ts).
+        const xs = el.footprint.map(([x]) => x);
+        const zs = el.footprint.map(([, z]) => z);
+        const geo = buildTerrainGroundGeometry(
+          { x: [Math.min(...xs), Math.max(...xs)], z: [Math.min(...zs), Math.max(...zs)] },
+          72,
+        );
+        const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: makeGroundTexture() }));
+        mesh.receiveShadow = true;
+        mesh.userData.elementId = el.id;
+        obj = new THREE.Group();
+        obj.name = el.id;
+        obj.add(mesh);
+      } else {
+        obj = (el as GeneratedWalkElement).generated
+          ? buildGeneratedElement(el as GeneratedWalkElement, kitMats)
+          : buildElementMesh(el);
+        if (el.kind === "road") {
+          // roads drape onto the slope continuously, vertex by vertex
+          obj.traverse((o) => {
+            const m = o as THREE.Mesh;
+            if (m.isMesh && m.geometry) drapeOntoTerrain(m.geometry);
+          });
+        } else {
+          // everything else keeps a flat base, seated at its footprint's
+          // terrain elevation — realistic (buildings level their own plinth)
+          obj.position.y += elevationAtCentroid(el.footprint);
+        }
+      }
+      obj.traverse((o) => {
+        o.userData.tier = el.evidenceTier;
+        if (!o.userData.elementId) o.userData.elementId = el.id;
+      });
       obj.visible = elementExistsAt(el, yearRef.current);
       obj.userData.shown = obj.visible;
       meshIndex.set(el.id, obj);
@@ -432,11 +484,9 @@ export function WalkScene() {
         modeRef.current === "walk" &&
         (kind === "ground" || kind === "road" || kind === "moat")
       ) {
-        glideTarget = new THREE.Vector3(
-          THREE.MathUtils.clamp(hit.point.x, BOUND_X[0], BOUND_X[1]),
-          EYE_HEIGHT,
-          THREE.MathUtils.clamp(hit.point.z, BOUND_Z[0], BOUND_Z[1]),
-        );
+        const gx = THREE.MathUtils.clamp(hit.point.x, BOUND_X[0], BOUND_X[1]);
+        const gz = THREE.MathUtils.clamp(hit.point.z, BOUND_Z[0], BOUND_Z[1]);
+        glideTarget = new THREE.Vector3(gx, elevationAt(gx, gz) + EYE_HEIGHT, gz);
         setSelectedId(null);
         return;
       }
@@ -575,10 +625,10 @@ export function WalkScene() {
         rightVec.set(-moveDir.z, 0, moveDir.x);
         camera.position.addScaledVector(moveDir, fwd * WALK_SPEED * boost * dt);
         camera.position.addScaledVector(rightVec, right * WALK_SPEED * boost * dt);
-        // stay on the ground and inside the modeled area
-        camera.position.y = EYE_HEIGHT;
+        // stay on the ground (following the real terrain) and inside the modeled area
         camera.position.x = THREE.MathUtils.clamp(camera.position.x, BOUND_X[0], BOUND_X[1]);
         camera.position.z = THREE.MathUtils.clamp(camera.position.z, BOUND_Z[0], BOUND_Z[1]);
+        camera.position.y = elevationAt(camera.position.x, camera.position.z) + EYE_HEIGHT;
       } else if (glideTarget) {
         // Street-View-style glide toward the clicked point
         moveDir.copy(glideTarget).sub(camera.position);
@@ -589,7 +639,7 @@ export function WalkScene() {
         } else {
           const step = Math.min(dist, 14 * dt);
           camera.position.addScaledVector(moveDir.normalize(), step);
-          camera.position.y = EYE_HEIGHT;
+          camera.position.y = elevationAt(camera.position.x, camera.position.z) + EYE_HEIGHT;
         }
       }
       // construction/demolition: rise from the ground / sink away

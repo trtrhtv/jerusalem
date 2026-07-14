@@ -19,7 +19,8 @@ export interface WalkElement {
     | "building"
     | "road"
     | "moat"
-    | "pool";
+    | "pool"
+    | "benchmark";
   /** Polygon footprint, [x, z] pairs in meters. */
   footprint: [number, number][];
   /** Extrusion height in meters (0 → thin slab). */

@@ -135,6 +135,24 @@ for (const el of walk.elements) {
   }
 }
 
+// --- Wilson 1865 elevation benchmarks (Stage C topography source) ---
+const elevations = read("data/features/wilson-1865-elevations.json");
+console.log(`\ndata/features/wilson-1865-elevations.json — ${elevations.features.length} benchmarks`);
+for (const f of elevations.features) {
+  const p = f.properties ?? {};
+  const id = p.id ?? "(no id)";
+  for (const field of ["id", "label", "labelHe", "elevationFeet", "elevationMeters", "sourceId"]) {
+    if (p[field] == null) fail(`[${id}] elevation benchmark missing "${field}"`);
+  }
+  if (p.sourceId && !sourceIds.has(p.sourceId)) fail(`[${id}] unknown sourceId "${p.sourceId}"`);
+  if (typeof p.elevationFeet === "number" && (p.elevationFeet < 2000 || p.elevationFeet > 3000)) {
+    fail(`[${id}] implausible elevationFeet ${p.elevationFeet} for Jerusalem's Old City (expected ~2400-2600 ft)`);
+  }
+  if (f.geometry?.type !== "Point" || !Array.isArray(f.geometry.coordinates)) {
+    fail(`[${id}] elevation benchmark needs Point geometry`);
+  }
+}
+
 // --- historic map overlays ---
 const { maps: historicMaps } = read("data/historic-maps.json");
 console.log(`\ndata/historic-maps.json — ${historicMaps.length} maps`);
@@ -166,6 +184,6 @@ for (const m of historicMaps) {
 }
 
 console.log(
-  `\n${errors === 0 ? "✓" : "✗"} checked ${featureCount} features + ${viewpoints.length} viewpoints + ${walk.elements.length} walk elements + ${historicMaps.length} historic maps — ${errors} error(s)`,
+  `\n${errors === 0 ? "✓" : "✗"} checked ${featureCount} features + ${viewpoints.length} viewpoints + ${walk.elements.length} walk elements + ${historicMaps.length} historic maps + ${elevations.features.length} elevation benchmarks — ${errors} error(s)`,
 );
 process.exit(errors === 0 ? 0 : 1);

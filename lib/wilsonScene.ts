@@ -51,7 +51,7 @@ const M_PER_DEG_LON =
  */
 export const SCENE_CALIBRATION = { dx: -0.6, dz: -24.2 } as const;
 
-function lonLatToLocal([lon, lat]: number[]): [number, number] {
+export function lonLatToLocal([lon, lat]: number[]): [number, number] {
   return [
     (lon - walkScene.anchor.lon) * M_PER_DEG_LON + SCENE_CALIBRATION.dx,
     (walkScene.anchor.lat - lat) * M_PER_DEG_LAT + SCENE_CALIBRATION.dz,

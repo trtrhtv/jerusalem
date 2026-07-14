@@ -308,3 +308,103 @@ const collection = {
 const out = resolve(root, "data/features/wilson-1865-buildings.json");
 writeFileSync(out, JSON.stringify(collection, null, 2) + "\n");
 console.log(`wrote ${features.length} features → ${out}`);
+
+// -----------------------------------------------------------------------
+// Elevation benchmarks (Stage C — real topography).
+//
+// Wilson's survey sheet carries its own leveled benchmarks: small "B.M."
+// labels with a value in feet above the Mediterranean datum (the British
+// survey convention of the period), e.g. "B.M.2525·2" — Jerusalem's Old
+// City sits ~2400-2600 ft (~730-790 m) above sea level, which matches.
+// These are read directly off the scan at high zoom, the same way the
+// building outlines are. They are the ONLY real elevation data available in
+// this project — no stereo-photogrammetry pipeline was run against the
+// 1917/18 aerial pairs (those archival images are not accessible in this
+// environment), so building HEIGHTS remain typological (see wilsonScene.ts).
+// What these benchmarks DO give us honestly: the ground's real, documented,
+// small-scale relief under the David Street corridor — used by lib/terrain.ts
+// to replace the flat conjectural ground plane with an interpolated surface.
+//
+// decimalUncertain: the digit after the decimal point is a best-effort read
+// of a compressed scan at this zoom; the integer foot value is confident and
+// is what matters for a low-poly terrain mesh.
+const ELEVATIONS = [
+  {
+    id: "wilson-bm-plaza-corner",
+    label: "B.M. 2525.2 — plaza/pool corner",
+    labelHe: "נ.ג. 2525.2 — פינת הכיכר/הבריכה",
+    px: [1495, 2892],
+    elevationFeet: 2525.2,
+    decimalUncertain: false,
+    notesHe: "נקודת הגובה של וילסון בפינת הכיכר הפנימית, במוצא רחוב דוד/סווייקת עלון.",
+    notes: "Wilson's leveled point at the inner-plaza corner, at the mouth of David Street/Suwaikat Allun.",
+  },
+  {
+    id: "wilson-bm-dawaye-west",
+    label: "B.M. 2503.9 — Suwaikat Allun / Harat ad-Dawaye junction",
+    labelHe: "נ.ג. 2503.9 — צומת סווייקת עלון / חארת א-דוואיה",
+    px: [1618, 2938],
+    elevationFeet: 2503.9,
+    decimalUncertain: true,
+    notesHe: "נקודת הגובה בצומת שבו מתפצל חארת א-דוואיה מרחוב דוד — הנקודה הנמוכה ביותר שמדדנו במקטע.",
+    notes: "Wilson's leveled point at the junction where Harat ad-Dawaye forks from David Street — the lowest point measured in this stretch.",
+  },
+  {
+    id: "wilson-bm-block65",
+    label: "B.M. 2547.8 — block 65, south of the corridor",
+    labelHe: "נ.ג. 2547.8 — גוש 65, מדרום למקטע",
+    px: [1595, 3010],
+    elevationFeet: 2547.8,
+    decimalUncertain: true,
+    notesHe: "נקודת הגובה ליד גוש 65, סמוך למצודה — הנקודה הגבוהה ביותר שמדדנו, עקבי עם קרבת המצודה לרכס.",
+    notes: "Wilson's leveled point near block 65, close to the citadel — the highest point measured, consistent with the citadel's ridge-top position.",
+  },
+  {
+    id: "wilson-bm-dawaye-east",
+    label: "B.M. 2507.3 — Harat ad-Dawaye, east end",
+    labelHe: "נ.ג. 2507.3 — חארת א-דוואיה, קצה מזרחי",
+    px: [1770, 2988],
+    elevationFeet: 2507.3,
+    decimalUncertain: false,
+    notesHe: "נקודת הגובה בקצה המזרחי של חארת א-דוואיה, ליד צומת גושים 62/67.",
+    notes: "Wilson's leveled point at the east end of Harat ad-Dawaye, near the block 62/67 junction.",
+  },
+];
+
+const elevationFeatures = ELEVATIONS.map((e) => {
+  const [lon, lat] = localPxToLonLatCorrected(e.px[0], e.px[1]);
+  return {
+    type: "Feature",
+    geometry: { type: "Point", coordinates: [lon, lat] },
+    properties: {
+      id: e.id,
+      label: e.label,
+      labelHe: e.labelHe,
+      elevationFeet: e.elevationFeet,
+      elevationMeters: Math.round(e.elevationFeet * 0.3048 * 100) / 100,
+      decimalUncertain: e.decimalUncertain,
+      sourceId: "wilson-1865",
+      notesHe: e.notesHe,
+      notes: e.notes,
+    },
+  };
+});
+
+const elevationCollection = {
+  type: "FeatureCollection",
+  name: "wilson-1865-elevations",
+  metadata: {
+    generatedBy: "scripts/digitize-wilson.mjs — do not edit by hand; edit the ELEVATIONS list there and re-run",
+    method:
+      "Wilson's own leveled benchmarks (\"B.M.\" + value in feet above the Mediterranean datum), read directly off the Huntington scan at high zoom and georeferenced the same way as the building outlines.",
+    datum:
+      "Feet above the Mediterranean Sea (standard 19th-century British Ordnance Survey convention). Converted to meters (×0.3048) for the 3D scene; elevationMeters is relative to nothing in particular — lib/terrain.ts re-bases it to the plaza-corner point so the existing hand-built massing (assumed to sit at scene y=0) stays put.",
+    scope:
+      "4 points within the digitized David Street corridor — sparse by nature (this is what survives legibly on a compressed scan at this resolution), but real and documented, unlike a fabricated slope. lib/terrain.ts interpolates between them (inverse-distance weighting) and smooths toward their average further out; it is NOT a claim of a precise DEM or of the wider Hinnom Valley descent beyond this footprint.",
+  },
+  features: elevationFeatures,
+};
+
+const elevOut = resolve(root, "data/features/wilson-1865-elevations.json");
+writeFileSync(elevOut, JSON.stringify(elevationCollection, null, 2) + "\n");
+console.log(`wrote ${elevationFeatures.length} elevation benchmarks → ${elevOut}`);

@@ -1,0 +1,96 @@
+{
+  "type": "FeatureCollection",
+  "name": "wilson-1865-elevations",
+  "metadata": {
+    "generatedBy": "scripts/digitize-wilson.mjs — do not edit by hand; edit the ELEVATIONS list there and re-run",
+    "method": "Wilson's own leveled benchmarks (\"B.M.\" + value in feet above the Mediterranean datum), read directly off the Huntington scan at high zoom and georeferenced the same way as the building outlines.",
+    "datum": "Feet above the Mediterranean Sea (standard 19th-century British Ordnance Survey convention). Converted to meters (×0.3048) for the 3D scene; elevationMeters is relative to nothing in particular — lib/terrain.ts re-bases it to the plaza-corner point so the existing hand-built massing (assumed to sit at scene y=0) stays put.",
+    "scope": "4 points within the digitized David Street corridor — sparse by nature (this is what survives legibly on a compressed scan at this resolution), but real and documented, unlike a fabricated slope. lib/terrain.ts interpolates between them (inverse-distance weighting) and smooths toward their average further out; it is NOT a claim of a precise DEM or of the wider Hinnom Valley descent beyond this footprint."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.228428,
+          31.776808
+        ]
+      },
+      "properties": {
+        "id": "wilson-bm-plaza-corner",
+        "label": "B.M. 2525.2 — plaza/pool corner",
+        "labelHe": "נ.ג. 2525.2 — פינת הכיכר/הבריכה",
+        "elevationFeet": 2525.2,
+        "elevationMeters": 769.68,
+        "decimalUncertain": false,
+        "sourceId": "wilson-1865",
+        "notesHe": "נקודת הגובה של וילסון בפינת הכיכר הפנימית, במוצא רחוב דוד/סווייקת עלון.",
+        "notes": "Wilson's leveled point at the inner-plaza corner, at the mouth of David Street/Suwaikat Allun."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.22919,
+          31.776576
+        ]
+      },
+      "properties": {
+        "id": "wilson-bm-dawaye-west",
+        "label": "B.M. 2503.9 — Suwaikat Allun / Harat ad-Dawaye junction",
+        "labelHe": "נ.ג. 2503.9 — צומת סווייקת עלון / חארת א-דוואיה",
+        "elevationFeet": 2503.9,
+        "elevationMeters": 763.19,
+        "decimalUncertain": true,
+        "sourceId": "wilson-1865",
+        "notesHe": "נקודת הגובה בצומת שבו מתפצל חארת א-דוואיה מרחוב דוד — הנקודה הנמוכה ביותר שמדדנו במקטע.",
+        "notes": "Wilson's leveled point at the junction where Harat ad-Dawaye forks from David Street — the lowest point measured in this stretch."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.228983,
+          31.776179
+        ]
+      },
+      "properties": {
+        "id": "wilson-bm-block65",
+        "label": "B.M. 2547.8 — block 65, south of the corridor",
+        "labelHe": "נ.ג. 2547.8 — גוש 65, מדרום למקטע",
+        "elevationFeet": 2547.8,
+        "elevationMeters": 776.57,
+        "decimalUncertain": true,
+        "sourceId": "wilson-1865",
+        "notesHe": "נקודת הגובה ליד גוש 65, סמוך למצודה — הנקודה הגבוהה ביותר שמדדנו, עקבי עם קרבת המצודה לרכס.",
+        "notes": "Wilson's leveled point near block 65, close to the citadel — the highest point measured, consistent with the citadel's ridge-top position."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.230138,
+          31.776327
+        ]
+      },
+      "properties": {
+        "id": "wilson-bm-dawaye-east",
+        "label": "B.M. 2507.3 — Harat ad-Dawaye, east end",
+        "labelHe": "נ.ג. 2507.3 — חארת א-דוואיה, קצה מזרחי",
+        "elevationFeet": 2507.3,
+        "elevationMeters": 764.23,
+        "decimalUncertain": false,
+        "sourceId": "wilson-1865",
+        "notesHe": "נקודת הגובה בקצה המזרחי של חארת א-דוואיה, ליד צומת גושים 62/67.",
+        "notes": "Wilson's leveled point at the east end of Harat ad-Dawaye, near the block 62/67 junction."
+      }
+    }
+  ]
+}
