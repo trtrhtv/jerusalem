@@ -18,7 +18,10 @@ const schema = read("data/schema/feature.schema.json");
 const periods = read("data/periods.json");
 const { sources } = read("data/sources.json");
 
-const FEATURE_FILES = ["data/features/jaffa-gate-corridor.json"];
+const FEATURE_FILES = [
+  "data/features/jaffa-gate-corridor.json",
+  "data/features/city-growth.json",
+];
 
 const periodKeys = new Set(periods.map((p) => p.key));
 const sourceIds = new Set(Object.keys(sources));
@@ -32,6 +35,7 @@ const fail = (msg) => {
   errors++;
   console.error(`  ✗ ${msg}`);
 };
+const seenIds = new Set();
 
 for (const file of FEATURE_FILES) {
   const fc = read(file);
@@ -39,6 +43,8 @@ for (const file of FEATURE_FILES) {
   for (const feature of fc.features) {
     featureCount++;
     const id = feature.properties?.id ?? "(no id)";
+    if (seenIds.has(id)) fail(`[${id}] duplicate feature id across files`);
+    seenIds.add(id);
     if (!validate(feature)) {
       for (const e of validate.errors ?? []) {
         fail(`[${id}] schema ${e.instancePath} ${e.message}`);

@@ -168,7 +168,29 @@ export function TimelineMap() {
   const [selectedVpId, setSelectedVpId] = useState<string | null>(null);
   const [enabledHistoric, setEnabledHistoric] = useState<Set<string>>(new Set());
   const [historicBusy, setHistoricBusy] = useState<string | null>(null);
+  const [playing, setPlaying] = useState(false);
   const warpedLayersRef = useRef<Map<string, WarpedLayerLike>>(new Map());
+
+  // ▶ timeline animation: sweep the year so the city visibly builds itself
+  useEffect(() => {
+    if (!playing) return;
+    const id = setInterval(() => {
+      setYear((y) => {
+        if (y >= TIMELINE.max) {
+          setPlaying(false);
+          return y;
+        }
+        // slow down through the dense 19th century, glide through the empty centuries
+        return y + (y >= 1840 ? 1 : 4);
+      });
+    }, 55);
+    return () => clearInterval(id);
+  }, [playing]);
+
+  const togglePlay = () => {
+    if (!playing && year >= TIMELINE.max) setYear(TIMELINE.min);
+    setPlaying((p) => !p);
+  };
 
   const toggleHistoricMap = async (m: HistoricMapDef) => {
     const map = mapRef.current;
@@ -368,11 +390,19 @@ export function TimelineMap() {
       setReady(true);
     };
 
+    // Event timing around style-load is fragile (styledata can fire before
+    // isStyleLoaded() flips, and `load` never fires when base tiles fail), so
+    // poll as the primary trigger and keep the events as accelerators.
     map.on("styledata", setup);
     map.on("load", setup);
+    const setupPoll = setInterval(() => {
+      setup();
+      if (done) clearInterval(setupPoll);
+    }, 100);
     setup();
 
     return () => {
+      clearInterval(setupPoll);
       map.remove();
       mapRef.current = null;
     };
@@ -440,21 +470,34 @@ export function TimelineMap() {
             </a>
           </div>
           {/* LTR so the timeline reads chronologically: drag right = later. */}
-          <div dir="ltr">
-            <input
-              type="range"
-              min={TIMELINE.min}
-              max={TIMELINE.max}
-              step={1}
-              value={year}
-              onChange={(e) => setYear(Number(e.target.value))}
-              className="w-full accent-neutral-800 dark:accent-neutral-200"
-              aria-label="שנה על ציר הזמן"
-            />
-            <div className="flex justify-between text-[10px] text-neutral-400">
-              <span>{TIMELINE.min}</span>
-              <span dir="rtl">גרור את ציר הזמן — העיר נבנית</span>
-              <span>{TIMELINE.max}</span>
+          <div dir="ltr" className="flex items-center gap-2">
+            <button
+              onClick={togglePlay}
+              aria-label={playing ? "עצור" : "נגן את ציר הזמן"}
+              title={playing ? "עצור" : "נגן — צפו בעיר נבנית"}
+              className="shrink-0 rounded-full bg-neutral-800 px-2.5 py-1 text-sm text-white transition hover:bg-neutral-600 dark:bg-neutral-200 dark:text-neutral-900 dark:hover:bg-neutral-400"
+            >
+              {playing ? "⏸" : "▶"}
+            </button>
+            <div className="w-full">
+              <input
+                type="range"
+                min={TIMELINE.min}
+                max={TIMELINE.max}
+                step={1}
+                value={year}
+                onChange={(e) => {
+                  setPlaying(false);
+                  setYear(Number(e.target.value));
+                }}
+                className="w-full accent-neutral-800 dark:accent-neutral-200"
+                aria-label="שנה על ציר הזמן"
+              />
+              <div className="flex justify-between text-[10px] text-neutral-400">
+                <span>{TIMELINE.min}</span>
+                <span dir="rtl">▶ = העיר נבנית לנגד עיניכם · או גררו ידנית</span>
+                <span>{TIMELINE.max}</span>
+              </div>
             </div>
           </div>
         </div>

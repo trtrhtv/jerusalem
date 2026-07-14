@@ -36,6 +36,6 @@ export const baseStyle: StyleSpecification = {
   ],
 };
 
-/** Jaffa Gate — the anchor of the pilot corridor. */
-export const PILOT_CENTER: [number, number] = [35.2258, 31.7788];
-export const PILOT_ZOOM = 15.2;
+/** Between Jaffa Gate and the new neighborhoods — frames the whole growth story. */
+export const PILOT_CENTER: [number, number] = [35.222, 31.779];
+export const PILOT_ZOOM = 14.4;

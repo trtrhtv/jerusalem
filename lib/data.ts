@@ -1,6 +1,7 @@
 import periodsRaw from "@/data/periods.json";
 import sourcesRaw from "@/data/sources.json";
 import corridorRaw from "@/data/features/jaffa-gate-corridor.json";
+import cityGrowthRaw from "@/data/features/city-growth.json";
 import viewpointsRaw from "@/data/viewpoints.json";
 import type {
   EvidenceTier,
@@ -27,7 +28,15 @@ export function getSource(id: string): SourceRecord | undefined {
 
 export const allSources: SourceRecord[] = Object.values(sourceMap);
 
-export const corridor = corridorRaw as unknown as TimeFeatureCollection;
+const corridorFC = corridorRaw as unknown as TimeFeatureCollection;
+const cityGrowthFC = cityGrowthRaw as unknown as TimeFeatureCollection;
+
+/** All map features: the pilot corridor + the city-growth layer, merged. */
+export const corridor: TimeFeatureCollection = {
+  type: "FeatureCollection",
+  name: "Jerusalem time layers (all feature files)",
+  features: [...corridorFC.features, ...cityGrowthFC.features],
+};
 
 // JSON widens tuple coordinates to number[], so go through unknown.
 export const viewpoints: Viewpoint[] = (

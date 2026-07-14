@@ -1,0 +1,336 @@
+{
+  "type": "FeatureCollection",
+  "name": "City growth: intramural quarters + the exit from the walls (documented founding years)",
+  "metadata": {
+    "descriptionHe": "שכבת 'העיר נבנית': הרובעים בתוך החומות (מארג בנייה היסטורי, טיפולוגי) וגל היציאה מהחומות — שכונות עם שנות ייסוד מתועדות מהרשומות ההיסטוריות. שנות הייסוד הן עובדות מבוססות; המתארים סכמטיים במכוון (geometryConfidence) עד לדיגיטציה מדויקת, והם מסומנים ככאלה. שכונות שהתאריך שלהן פחות מבוסס מסומנות builtYearApprox או typological.",
+    "descriptionEn": "The 'city gets built' layer: intramural quarters (historic fabric, typological) plus the exodus beyond the walls — neighborhoods with documented founding years. Years are established facts; footprints are deliberately schematic (flagged via geometryConfidence) pending precise digitization.",
+    "coordinateSystem": "WGS84 (lon, lat)",
+    "lastReviewed": "2026-07-14"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2300, 31.7775], [35.2368, 31.7788], [35.2362, 31.7822], [35.2302, 31.7818], [35.2300, 31.7775]]] },
+      "properties": {
+        "id": "muslim-quarter", "name": "Muslim Quarter", "nameHe": "הרובע המוסלמי",
+        "builtPeriod": "mamluk", "builtYear": null, "buildingType": "residential-quarter",
+        "evidenceTier": "typological", "geometryConfidence": "schematic",
+        "sources": ["burgoyne-mamluk-1987", "wilson-1865"],
+        "notesHe": "המארג הצפוני-מזרחי של העיר העתיקה — עיקר הבנייה הממלוכית המתועדת (סקר בורגוין). המארג קיים ומתפקד עד היום; המתאר כאן סכמטי.",
+        "notes": "The old city's NE fabric — the core of documented Mamluk construction (Burgoyne survey). Fabric survives today; outline schematic."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2262, 31.7770], [35.2300, 31.7775], [35.2302, 31.7818], [35.2280, 31.7815], [35.2262, 31.7788], [35.2262, 31.7770]]] },
+      "properties": {
+        "id": "christian-quarter", "name": "Christian Quarter", "nameHe": "הרובע הנוצרי",
+        "builtPeriod": "mamluk", "builtYear": null, "buildingType": "residential-quarter",
+        "evidenceTier": "typological", "geometryConfidence": "schematic",
+        "sources": ["wilson-1865"],
+        "notesHe": "הרובע סביב כנסיית הקבר; מבנה הרחובות מתועד במלואו במדידת וילסון 1865.",
+        "notes": "The quarter around the Holy Sepulchre; street fabric fully documented in the 1865 Wilson survey."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2268, 31.7722], [35.2302, 31.7726], [35.2300, 31.7758], [35.2266, 31.7758], [35.2268, 31.7722]]] },
+      "properties": {
+        "id": "armenian-quarter", "name": "Armenian Quarter", "nameHe": "הרובע הארמני",
+        "builtPeriod": "mamluk", "builtYear": null, "buildingType": "residential-quarter",
+        "evidenceTier": "typological", "geometryConfidence": "schematic",
+        "sources": ["wilson-1865"],
+        "notesHe": "מתחם המנזר הארמני והמגורים סביבו, בדרום-מערב העיר העתיקה.",
+        "notes": "The Armenian monastery compound and its residential surroundings, SW old city."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2302, 31.7726], [35.2338, 31.7732], [35.2336, 31.7762], [35.2300, 31.7758], [35.2302, 31.7726]]] },
+      "properties": {
+        "id": "jewish-quarter", "name": "Jewish Quarter", "nameHe": "הרובע היהודי",
+        "builtPeriod": "mamluk", "builtYear": null, "buildingType": "residential-quarter",
+        "evidenceTier": "typological", "geometryConfidence": "schematic",
+        "sources": ["wilson-1865"],
+        "notesHe": "הרובע היהודי ההיסטורי; מתועד במדידת וילסון. בתוכו בתי מחסה (1860) — ראו אלמנט נפרד.",
+        "notes": "The historic Jewish Quarter; documented in the Wilson survey. Contains Batei Mahseh (1860) — separate element."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2320, 31.7736], [35.2334, 31.7738], [35.2333, 31.7748], [35.2319, 31.7746], [35.2320, 31.7736]]] },
+      "properties": {
+        "id": "batei-mahseh", "name": "Batei Mahseh", "nameHe": "בתי מחסה",
+        "builtPeriod": "ottoman-late", "builtYear": 1860, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "approximate",
+        "sources": ["neighborhood-founding-record", "wilson-1865"],
+        "notesHe": "שיכוני צדקה לעניי הרובע היהודי (מ-1860, ביוזמת יהודי הולנד וגרמניה) — מהבנייה המאורגנת הראשונה בעיר; מופיעים במדידת וילסון.",
+        "notes": "Charity housing for the Jewish Quarter's poor (from 1860, Dutch-German initiative) — among the first organized construction; appears in the Wilson survey."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2200, 31.7812], [35.2218, 31.7814], [35.2216, 31.7824], [35.2198, 31.7822], [35.2200, 31.7812]]] },
+      "properties": {
+        "id": "beit-david", "name": "Beit David", "nameHe": "בית דוד",
+        "builtPeriod": "ottoman-late", "builtYear": 1873, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "השכונה הרביעית מחוץ לחומות (1873), חצר מוקפת ליד נחלת שבעה.",
+        "notes": "The fourth neighborhood outside the walls (1873), an enclosed courtyard near Nahalat Shiv'a."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2210, 31.7845], [35.2238, 31.7848], [35.2236, 31.7862], [35.2208, 31.7859], [35.2210, 31.7845]]] },
+      "properties": {
+        "id": "mea-shearim", "name": "Mea She'arim", "nameHe": "מאה שערים",
+        "builtPeriod": "ottoman-late", "builtYear": 1874, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "approximate",
+        "sources": ["neighborhood-founding-record", "osm"],
+        "notesHe": "נוסדה 1874 כשכונת חצר מוקפת; מהגדולות והמשפיעות שבשכונות היציאה מהחומות. קיימת עד היום.",
+        "notes": "Founded 1874 as an enclosed courtyard neighborhood; among the largest of the exodus wave. Extant."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2162, 31.7822], [35.2178, 31.7824], [35.2176, 31.7834], [35.2160, 31.7832], [35.2162, 31.7822]]] },
+      "properties": {
+        "id": "even-israel", "name": "Even Yisrael", "nameHe": "אבן ישראל",
+        "builtPeriod": "ottoman-late", "builtYear": 1875, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "נוסדה 1875; שמה על שם 53 (אב\"ן) המייסדים. בין יפו לאגריפס.",
+        "notes": "Founded 1875; named for its 53 (gematria: EVEN) founders. Between Jaffa Rd and Agrippas."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2150, 31.7816], [35.2166, 31.7818], [35.2164, 31.7828], [35.2148, 31.7826], [35.2150, 31.7816]]] },
+      "properties": {
+        "id": "mishkenot-israel", "name": "Mishkenot Yisrael", "nameHe": "משכנות ישראל",
+        "builtPeriod": "ottoman-late", "builtYear": 1875, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "נוסדה 1875, מגרעין שכונות נחלאות.",
+        "notes": "Founded 1875, part of the Nachlaot cluster's core."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2120, 31.7846], [35.2140, 31.7848], [35.2138, 31.7858], [35.2118, 31.7856], [35.2120, 31.7846]]] },
+      "properties": {
+        "id": "beit-yaakov", "name": "Beit Ya'akov", "nameHe": "בית יעקב",
+        "builtPeriod": "ottoman-late", "builtYear": 1877, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "נוסדה 1877, סמוך לשוק מחנה יהודה של היום.",
+        "notes": "Founded 1877, near today's Mahane Yehuda market."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2140, 31.7832], [35.2156, 31.7834], [35.2154, 31.7844], [35.2138, 31.7842], [35.2140, 31.7832]]] },
+      "properties": {
+        "id": "mazkeret-moshe", "name": "Mazkeret Moshe", "nameHe": "מזכרת משה",
+        "builtPeriod": "ottoman-late", "builtYear": 1882, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "נוסדה 1882 מכספי קרן משה מונטיפיורי, לאשכנזים.",
+        "notes": "Founded 1882 with Montefiore fund money, for Ashkenazim."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2138, 31.7822], [35.2154, 31.7824], [35.2152, 31.7832], [35.2136, 31.7830], [35.2138, 31.7822]]] },
+      "properties": {
+        "id": "ohel-moshe", "name": "Ohel Moshe", "nameHe": "אוהל משה",
+        "builtPeriod": "ottoman-late", "builtYear": 1882, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "נוסדה 1882 מכספי קרן מונטיפיורי, לספרדים — אחות של מזכרת משה.",
+        "notes": "Founded 1882 with Montefiore fund money, for Sephardim — sister of Mazkeret Moshe."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2238, 31.7722], [35.2254, 31.7724], [35.2252, 31.7736], [35.2236, 31.7734], [35.2238, 31.7722]]] },
+      "properties": {
+        "id": "yemin-moshe", "name": "Yemin Moshe", "nameHe": "ימין משה",
+        "builtPeriod": "ottoman-late", "builtYear": 1891, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "approximate",
+        "sources": ["neighborhood-founding-record", "osm"],
+        "notesHe": "נוסדה 1891 כהרחבת משכנות שאננים, סביב טחנת הרוח של מונטיפיורי.",
+        "notes": "Founded 1891 as the expansion of Mishkenot Sha'ananim, around Montefiore's windmill."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2206, 31.7858], [35.2224, 31.7860], [35.2222, 31.7870], [35.2204, 31.7868], [35.2206, 31.7858]]] },
+      "properties": {
+        "id": "batei-ungarin", "name": "Batei Ungarin", "nameHe": "בתי אונגרין",
+        "builtPeriod": "ottoman-late", "builtYear": 1891, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "שיכוני כולל הונגריה (1891), צמוד למאה שערים.",
+        "notes": "The Hungarian kolel housing (1891), adjacent to Mea She'arim."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2178, 31.7884], [35.2200, 31.7886], [35.2198, 31.7898], [35.2176, 31.7896], [35.2178, 31.7884]]] },
+      "properties": {
+        "id": "bukharan-quarter", "name": "Bukharan Quarter", "nameHe": "שכונת הבוכרים",
+        "builtPeriod": "ottoman-late", "builtYear": 1891, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "approximate",
+        "sources": ["neighborhood-founding-record", "osm"],
+        "notesHe": "נוסדה 1891 בידי יוצאי בוכרה, בתכנון רחב ומפואר יחסית לזמנה.",
+        "notes": "Founded 1891 by Bukharan Jews, on an unusually grand plan for its day."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2150, 31.7856], [35.2168, 31.7858], [35.2166, 31.7868], [35.2148, 31.7866], [35.2150, 31.7856]]] },
+      "properties": {
+        "id": "zichron-moshe", "name": "Zichron Moshe", "nameHe": "זכרון משה",
+        "builtPeriod": "ottoman-late", "builtYear": 1905, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "נוסדה 1905, מהשכונות ה'מודרניות' של סוף התקופה העות'מאנית.",
+        "notes": "Founded 1905, one of the 'modern' late-Ottoman neighborhoods."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2090, 31.7732], [35.2112, 31.7734], [35.2110, 31.7748], [35.2088, 31.7746], [35.2090, 31.7732]]] },
+      "properties": {
+        "id": "shaarei-hesed", "name": "Sha'arei Hesed", "nameHe": "שערי חסד",
+        "builtPeriod": "ottoman-late", "builtYear": 1909, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "נוסדה 1909 בידי חברת גמילות חסדים.",
+        "notes": "Founded 1909 by a charitable society."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2184, 31.7590], [35.2212, 31.7594], [35.2208, 31.7642], [35.2186, 31.7638], [35.2184, 31.7590]]] },
+      "properties": {
+        "id": "german-colony", "name": "German Colony", "nameHe": "המושבה הגרמנית",
+        "builtPeriod": "ottoman-late", "builtYear": 1873, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "approximate",
+        "sources": ["neighborhood-founding-record", "osm"],
+        "notesHe": "נוסדה 1873 בידי הטמפלרים בעמק רפאים; בתי האבן לאורך הרחוב קיימים עד היום.",
+        "notes": "Founded 1873 by the Templers in the Refaim valley; its stone houses still line the street."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2286, 31.7890], [35.2306, 31.7892], [35.2304, 31.7904], [35.2284, 31.7902], [35.2286, 31.7890]]] },
+      "properties": {
+        "id": "american-colony-compound", "name": "American Colony (Sheikh Jarrah compound)", "nameHe": "המושבה האמריקאית (מתחם שייח' ג'ראח)",
+        "builtPeriod": "ottoman-late", "builtYear": 1896, "buildingType": "institution",
+        "evidenceTier": "documented", "geometryConfidence": "approximate",
+        "sources": ["neighborhood-founding-record", "american-colony-archive"],
+        "notesHe": "הקהילה נוסדה 1881 בעיר העתיקה; ב-1896 עברה לאחוזת אל-חוסייני בשייח' ג'ראח — הבית שממנו פעל גם ארכיון הצילום שהתמונות שלנו מגיעות ממנו.",
+        "notes": "Community founded 1881 in the old city; moved 1896 to the Husseini estate in Sheikh Jarrah — home of the photo department our photographs come from."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2270, 31.7872], [35.2296, 31.7875], [35.2294, 31.7888], [35.2268, 31.7885], [35.2270, 31.7872]]] },
+      "properties": {
+        "id": "sheikh-jarrah", "name": "Sheikh Jarrah", "nameHe": "שייח' ג'ראח",
+        "builtPeriod": "ottoman-late", "builtYear": 1865, "builtYearApprox": true, "buildingType": "residential-quarter",
+        "evidenceTier": "typological", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "שכונה ערבית שהתפתחה מצפון לעיר סביב אחוזות משפחות ירושלמיות מ-שנות ה-1860 ואילך; תאריך תחילת הבנייה מוערך, ולכן טיפולוגי.",
+        "notes": "Arab neighborhood that grew north of the city around notable-family estates from the 1860s; start date approximate, hence typological."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2330, 31.7884], [35.2356, 31.7887], [35.2354, 31.7900], [35.2328, 31.7897], [35.2330, 31.7884]]] },
+      "properties": {
+        "id": "wadi-al-joz", "name": "Wadi al-Joz", "nameHe": "ואדי אל-ג'וז",
+        "builtPeriod": "ottoman-late", "builtYear": 1875, "builtYearApprox": true, "buildingType": "residential-quarter",
+        "evidenceTier": "typological", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "בנייה ערבית שהתפתחה בוואדי שמצפון-מזרח לחומות בשלהי התקופה העות'מאנית; מתועדת כתופעה, תאריך מוערך.",
+        "notes": "Arab construction in the valley NE of the walls, late Ottoman; documented as a phenomenon, date approximate."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2268, 31.7608], [35.2292, 31.7611], [35.2290, 31.7626], [35.2266, 31.7623], [35.2268, 31.7608]]] },
+      "properties": {
+        "id": "abu-tor", "name": "Abu Tor", "nameHe": "אבו תור",
+        "builtPeriod": "ottoman-late", "builtYear": 1880, "builtYearApprox": true, "buildingType": "residential-quarter",
+        "evidenceTier": "typological", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "שכונה ערבית על הרכס שמדרום לגיא בן הינום — הרכס שממנו צייר רוברטס ב-1839. תאריך מוערך.",
+        "notes": "Arab neighborhood on the ridge south of the Hinnom — the ridge Roberts drew from in 1839. Date approximate."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2076, 31.7880], [35.2100, 31.7883], [35.2098, 31.7896], [35.2074, 31.7893], [35.2076, 31.7880]]] },
+      "properties": {
+        "id": "romema", "name": "Romema", "nameHe": "רוממה",
+        "builtPeriod": "british-mandate", "builtYear": 1921, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "נוסדה 1921, בנקודה הגבוהה של דרך יפו — תחילת גל הבנייה של תקופת המנדט.",
+        "notes": "Founded 1921 at the high point of Jaffa Road — opening the Mandate-era construction wave."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2098, 31.7702], [35.2130, 31.7706], [35.2126, 31.7736], [35.2094, 31.7732], [35.2098, 31.7702]]] },
+      "properties": {
+        "id": "rehavia", "name": "Rehavia", "nameHe": "רחביה",
+        "builtPeriod": "british-mandate", "builtYear": 1922, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "approximate",
+        "sources": ["neighborhood-founding-record", "osm"],
+        "notesHe": "נוסדה 1922 כשכונת גנים מתוכננת (ריכרד קאופמן).",
+        "notes": "Founded 1922 as a planned garden neighborhood (Richard Kauffmann)."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.1902, 31.7788], [35.1934, 31.7792], [35.1930, 31.7812], [35.1898, 31.7808], [35.1902, 31.7788]]] },
+      "properties": {
+        "id": "beit-hakerem", "name": "Beit HaKerem", "nameHe": "בית הכרם",
+        "builtPeriod": "british-mandate", "builtYear": 1922, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "נוסדה 1922 כשכונת גנים במערב העיר (גם היא בתכנון קאופמן).",
+        "notes": "Founded 1922 as a western garden neighborhood (also Kauffmann-planned)."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2204, 31.7492], [35.2238, 31.7496], [35.2234, 31.7518], [35.2200, 31.7514], [35.2204, 31.7492]]] },
+      "properties": {
+        "id": "talpiot", "name": "Talpiot", "nameHe": "תלפיות",
+        "builtPeriod": "british-mandate", "builtYear": 1922, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "נוסדה 1922 בדרום העיר, שכונת גנים שלישית של ראשית המנדט.",
+        "notes": "Founded 1922 in the city's south — a third early-Mandate garden neighborhood."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.2086, 31.7862], [35.2110, 31.7865], [35.2108, 31.7878], [35.2084, 31.7875], [35.2086, 31.7862]]] },
+      "properties": {
+        "id": "mekor-baruch", "name": "Mekor Baruch", "nameHe": "מקור ברוך",
+        "builtPeriod": "british-mandate", "builtYear": 1924, "builtYearApprox": true, "buildingType": "residential-quarter",
+        "evidenceTier": "documented", "geometryConfidence": "schematic",
+        "sources": ["neighborhood-founding-record"],
+        "notesHe": "נבנתה בעיקרה בשנות ה-20 המוקדמות; שנת הייסוד המקובלת ~1924.",
+        "notes": "Built mainly in the early 1920s; conventional founding year ~1924."
+      }
+    }
+  ]
+}
