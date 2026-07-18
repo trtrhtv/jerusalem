@@ -14,6 +14,7 @@ import {
   applyEvidenceMode,
   buildSky,
   buildTrees,
+  makeGrainDataUrl,
   makeGroundTexture,
   makeRoadTexture,
   makeRoofTexture,
@@ -96,6 +97,10 @@ function roofTex(): THREE.Texture {
 let roadTexSingleton: THREE.Texture | null = null;
 function roadTex(): THREE.Texture {
   return (roadTexSingleton ??= makeRoadTexture());
+}
+let grainUrlSingleton: string | null = null;
+function grainUrl(): string {
+  return (grainUrlSingleton ??= makeGrainDataUrl());
 }
 
 /** Timeline range of the walk's year slider (matches the map). */
@@ -229,6 +234,12 @@ export function WalkScene() {
   const [evidenceMode, setEvidenceMode] = useState(false);
   const [mode, setMode] = useState<ViewMode>(initialMode);
   const modeRef = useRef<ViewMode>(mode);
+  // Aerial mode defaults to a historic-aerial-photograph LOOK (monochrome,
+  // grain, vignette, near-vertical framing) — a stylized simulation of what
+  // a 1917/18-style reconnaissance photo of this reconstruction would show,
+  // not a claim of an actual photograph. Togglable back to the plain
+  // color/evidence render, which stays useful for reading the tier legend.
+  const [aerialPhotoStyle, setAerialPhotoStyle] = useState(true);
   /** Set inside the mount effect; lets the mode effect drive the camera. */
   const applyModeRef = useRef<((m: ViewMode) => void) | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -494,10 +505,14 @@ export function WalkScene() {
     };
 
     // --- synthetic aerial mode: the same evidence-bearing scene from above ---
+    // A near-vertical pitch (a small forward offset, not the ~65°-from-nadir
+    // oblique tilt this used to have) — real WWI reconnaissance photographs
+    // were shot close to straight down, and that's the framing an "aerial
+    // photograph" reads as, not a drone fly-by angle.
     const aerial = { tx: 90, tz: -10, h: 230 };
     const savedPose = { pos: new THREE.Vector3(), quat: new THREE.Quaternion(), saved: false };
     const applyAerialCam = () => {
-      camera.position.set(aerial.tx, aerial.h, aerial.tz + aerial.h * 0.42);
+      camera.position.set(aerial.tx, aerial.h, aerial.tz + aerial.h * 0.16);
       camera.lookAt(aerial.tx, 0, aerial.tz);
     };
     applyModeRef.current = (m) => {
@@ -704,9 +719,39 @@ export function WalkScene() {
 
   const tier = selected ? evidenceTierMeta[selected.evidenceTier] : null;
 
+  const showPhotoStyle = mode === "aerial" && aerialPhotoStyle;
+
   return (
     <div className="relative h-full w-full select-none">
-      <div ref={mountRef} className="absolute inset-0 cursor-crosshair" />
+      <div
+        ref={mountRef}
+        className="absolute inset-0 cursor-crosshair"
+        style={
+          showPhotoStyle
+            ? { filter: "grayscale(1) sepia(0.16) contrast(1.32) brightness(1.06)" }
+            : undefined
+        }
+      />
+
+      {/* historic aerial-photo treatment: grain + vignette, stylized — not a real photo */}
+      {showPhotoStyle && (
+        <div
+          className="pointer-events-none absolute inset-0 z-[5] mix-blend-multiply"
+          style={{
+            backgroundImage: `url(${grainUrl()})`,
+            backgroundSize: "180px 180px",
+            opacity: 0.22,
+          }}
+        />
+      )}
+      {showPhotoStyle && (
+        <div
+          className="pointer-events-none absolute inset-0 z-[5]"
+          style={{
+            boxShadow: "inset 0 0 min(28vw,320px) rgba(20,15,5,0.55)",
+          }}
+        />
+      )}
 
       {/* time bar: play (the city builds itself) + slider + presets */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center p-3">
@@ -763,6 +808,15 @@ export function WalkScene() {
           >
             {mode === "walk" ? "🛩️ תצ״א" : "🚶 חזרה לרחוב"}
           </button>
+          {mode === "aerial" && (
+            <button
+              onClick={() => setAerialPhotoStyle((v) => !v)}
+              className="rounded-lg bg-black/5 px-2.5 py-1 text-xs font-semibold hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20"
+              title="הדמיית מראה תצלום-אוויר היסטורי (מונוכרום, גרעיניות) לעומת תצוגה צבעונית לקריאת מדרג הראיות"
+            >
+              {aerialPhotoStyle ? "🎨 צבעוני" : "📷 תצ״א היסטורית"}
+            </button>
+          )}
           <a
             href={`/?year=${year}`}
             className="rounded-lg bg-black/5 px-2.5 py-1 text-xs hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20"
@@ -778,7 +832,7 @@ export function WalkScene() {
         <div className="rounded-full border border-black/10 bg-white/80 px-4 py-1.5 text-[11px] text-neutral-600 shadow backdrop-blur dark:border-white/10 dark:bg-neutral-900/80 dark:text-neutral-300">
           {mode === "walk"
             ? "גררו להבטה · קליק על הרחוב = תנועה לשם · WASD/חצים להליכה · Shift ריצה · קליק על מבנה = מקורות · E מצב ראיות · 1/2/3 שנים"
-            : "תצ״א סינתטית מההדמיה — גררו להזזה · גלגלת לזום · ▶ מנגן את בניית העיר · קליק על מבנה = מקורות · E מצב ראיות"}
+            : `תצ״א סינתטית מההדמיה (${aerialPhotoStyle ? "סגנון תצלום היסטורי" : "צבעוני"}) — גררו להזזה · גלגלת לזום · ▶ מנגן את בניית העיר · קליק על מבנה = מקורות · E מצב ראיות`}
         </div>
       </div>
 
@@ -807,6 +861,13 @@ export function WalkScene() {
             הדמיה מסוגננת נאמנת-מקורות: מתארים וגבהים מוערכים מהמקורות, הפרטים
             (פתחים, כיפות, עצים) טיפולוגיים. קליק על כל מבנה מציג את מקורותיו.
           </p>
+          {showPhotoStyle && (
+            <p className="mt-1 text-[10px] leading-snug text-neutral-500">
+              📷 סגנון &quot;תצ״א היסטורית&quot; הוא עיבוד חזותי (מונוכרום,
+              גרעיניות, וינייטה) על גבי אותה הדמיה תלת-ממדית מעוגנת-מקורות —
+              לא תצלום אמיתי ולא שחזור של תצ&quot;א 1917/18 בפועל.
+            </p>
+          )}
         </div>
       </div>
 

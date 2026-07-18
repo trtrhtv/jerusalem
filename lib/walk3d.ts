@@ -402,6 +402,31 @@ export function buildTrees(): THREE.Group {
   return g;
 }
 
+// ---------- historic aerial-photo styling ----------
+
+/**
+ * Film-grain speckle pattern as a data URL, for a CSS background-image
+ * tiled over the aerial view. Static (not per-frame) — cheap, and old
+ * aerial-photo grain doesn't need to animate to read as "photographed".
+ */
+export function makeGrainDataUrl(size = 180): string {
+  const c = document.createElement("canvas");
+  c.width = size;
+  c.height = size;
+  const g = c.getContext("2d")!;
+  const rand = seededRand("grain");
+  const img = g.createImageData(size, size);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = 128 + (rand() - 0.5) * 90;
+    img.data[i] = v;
+    img.data[i + 1] = v;
+    img.data[i + 2] = v;
+    img.data[i + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  return c.toDataURL();
+}
+
 // ---------- evidence mode ----------
 
 /**
